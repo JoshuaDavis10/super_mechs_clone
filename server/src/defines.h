@@ -1,3 +1,5 @@
+#pragma once
+
 #define u64 unsigned long
 #define i64 long
 #define u32 unsigned int
@@ -8,3 +10,6 @@
 #define i8 signed char
 #define P1 0
 #define P2 1
+
+#define true 1
+#define false 0
