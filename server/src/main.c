@@ -1,6 +1,7 @@
 #include "defines.h"
 
 #include "game_data.h"
+#include "item_data.h"
 #include "socket.h"
 #include "logger.h"
 
@@ -46,7 +47,7 @@ int main() {
     start = clock();
 
     init_game_data();
-    //TODO: load_item_data();  <-- this loads all the items from the item file into arrays for quick access
+    //TODO: load_item_data(); <--currently writing this
     init_sock_conn();
     //TODO: load_game_data();  <-- load data from clients into game_data
 

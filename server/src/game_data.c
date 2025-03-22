@@ -32,6 +32,7 @@ i8 init_game_data() {
     g_data = (game_data*)malloc(sizeof(game_data));
     memset(g_data, 0, sizeof(game_data)); 
     LINFO("initialized game data.");
+    LTRACE("memory used for game data: %lu bytes", sizeof(*g_data));
     return true;
 }
 
