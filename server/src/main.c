@@ -45,22 +45,23 @@ int main() {
     double cpu_time_used;
     start = clock();
 
-    //server startup stuff here
     init_game_data();
     //TODO: load_item_data();  <-- this loads all the items from the item file into arrays for quick access
-    //TODO: connect_clients(); <-- sockets
+    init_sock_conn();
     //TODO: load_game_data();  <-- load data from clients into game_data
-    //server startup stuff here
-
 
     end = clock();
     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
     LINFO("server startup complete.");
     LTRACE("cpu time used: %.2lfms", cpu_time_used);
 
-    char request[MAX_MESSAGE_SIZE];
+    char command[MAX_MESSAGE_SIZE];
+    i8 result;
+    u32 turn;
     while(true) {
-        i8 result = process_command(request);
+        turn = get_turn();
+        recv_msg(command, turn);
+        result = process_command(command);
         if(result == 1) {
             LINFO("player 1 wins.");
             break;

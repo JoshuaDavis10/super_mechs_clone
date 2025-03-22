@@ -25,7 +25,7 @@ const char* cmd_strings[] =
 "r1", "r2", "r3", "l1", "l2", "l3", "f", "er", "rc"
 };
 
-game_data* g_data = 0;
+static game_data* g_data = 0;
 
 i8 init_game_data() {
     _ASSERT(g_data == 0);
@@ -40,6 +40,10 @@ void free_game_data() {
     free(g_data);
     g_data = 0;
     LINFO("uninitialized game data.");
+}
+
+u32 get_turn() {
+    return g_data->turn;
 }
 
 i8 process_command(const char* cmd) {

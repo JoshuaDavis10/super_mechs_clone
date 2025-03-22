@@ -74,3 +74,4 @@ void free_game_data();
 //return 2 if P2 wins as a result of request
 //return 0 otherwise.
 i8 process_command(const char* cmd); 
+u32 get_turn();

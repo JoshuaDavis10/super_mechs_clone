@@ -4,7 +4,6 @@
 
 #define MAX_MESSAGE_SIZE 64
 
-//TODO: functions for connecting sockets
-
-u8 rcv_req(u32 c_id);
-u8 snd_req(u32 c_id, const char* msg);
+u8 init_sock_conn(); 
+u8 recv_msg(char* msg, i32 c_id);
+u8 send_msg(const char* msg, i32 c_id);

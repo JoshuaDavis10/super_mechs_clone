@@ -3,7 +3,7 @@ SRCDIR:=src
 OBJDIR:=obj
 BIN:=bin/server
 BINDIR:=bin
-CFLAGS:= -fsanitize=address -std=c99 -Wall -Werror
+CFLAGS:= -fsanitize=address -std=gnu99 -Wall -Werror
 LFLAGS:= -fsanitize=address
 
 SOURCES=$(wildcard $(SRCDIR)/*.c)
@@ -26,3 +26,4 @@ $(OBJDIR):
 .PHONY: clean
 clean:
 	@rm -rf obj
+	@rm -rf bin
