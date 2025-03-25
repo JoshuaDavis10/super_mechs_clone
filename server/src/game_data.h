@@ -3,9 +3,9 @@
 #include "defines.h"
 
 typedef enum w_dmg_type {
-    PHYS,
-    HEAT,
-    ENERGY
+    PHYS=0,
+    HEAT=1,
+    ENERGY=2
 } w_dmg_type;
 
 typedef enum w_displace {
@@ -66,7 +66,8 @@ typedef struct game_data {
 } game_data;
 
 //return 1 on successful initialize... for now it'll crash otherwise (assertion)
-i8 init_game_data(); 
+u8 init_game_data(); 
+u8 load_game_data();
 void free_game_data(); 
 
 //return -1 on error (as in the request is valid but the action implied by the request can't be carried out)

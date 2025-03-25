@@ -27,11 +27,11 @@ const char* cmd_strings[] =
 
 static game_data* g_data = 0;
 
-i8 init_game_data() {
+u8 init_game_data() {
     _ASSERT(g_data == 0);
     g_data = (game_data*)malloc(sizeof(game_data));
     memset(g_data, 0, sizeof(game_data)); 
-    LINFO("initialized game data.");
+    LINFO("game data initialized.");
     LTRACE("memory used for game data: %lu bytes", sizeof(*g_data));
     return true;
 }
@@ -45,6 +45,18 @@ void free_game_data() {
 
 u32 get_turn() {
     return g_data->turn;
+}
+
+u8 load_game_data() {
+    //TODO: load game data from clients
+    // - start with player 1, ask for items, receive items in loop, process each item
+    // - send an ACK after each item is processed, or like an error if there's an issue
+    // - store items in a list for each player so that u can send each players' items to their opponent later
+    // - do same for player 2
+
+    //TODO: send each player all items that the other player has
+    // - just run through the list that was saved while getting the items and send them to respective clients
+    return true;
 }
 
 i8 process_command(const char* cmd) {
@@ -77,7 +89,7 @@ i8 process_command(const char* cmd) {
         case REQ_T5: case REQ_T6: case REQ_T7: case REQ_T8: case REQ_T9:
             u32 w_index = command;
             if(w_index >= REQ_T0 || w_index <= REQ_T9) { w_index = REQ_T0; }
-            _ASSERT_MSG(g_data->d_dynamic[player].weapon_uses[w_index] > 0, "received command to use weapon that has no remaining uses"); //uses check
+            _ASSERT_MSG(g_data->d_dynamic[player].weapon_uses[w_index] != 0, "received command to use weapon that has no remaining uses"); //uses check
 
             //range check 
             if(dist < 0) { dist = -dist; }

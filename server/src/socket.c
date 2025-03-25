@@ -26,11 +26,14 @@ static connection_info* ci = 0;
 void* get_in_addr(struct sockaddr* sa);
 i32 setup_socket();
 
+//TODO: close socket
+
 u8 init_sock_conn() {
     _ASSERT(ci == 0);
 
     ci = (connection_info*)malloc(sizeof(connection_info));
     memset(ci, 0, sizeof(connection_info));
+    LTRACE("memory used for socket: %lu", sizeof(connection_info));
 
     int sockfd = setup_socket();
     LTRACE("socket created.");
@@ -53,6 +56,13 @@ u8 init_sock_conn() {
     ci->client_fd[P1] = client_one_fd;
     ci->client_fd[P2] = client_two_fd;
     return true;
+}
+
+void free_socket() {
+    _ASSERT(ci != 0);
+    free(ci);
+    ci = 0;
+    LINFO("uninitialized socket info");
 }
 
 u8 send_msg(const char* msg, i32 client) {

@@ -2,7 +2,7 @@
 torsos:1
 legs:1
 side_weapons:1
-top_weaons:1
+top_weapons:1
 teleport_modules:1
 charge_modules:1
 grapple_modules:1
@@ -20,30 +20,39 @@ big_daddy:0
     energy_res:5
     heat_res:5
 
+#end
+
+
 #legs
 
 thunder_thighs:0
     weight:50
     hp:50
     damage:20
-    damage_type:0
+    dmg_type:0
+    displace:1
+#end
+
 
 #side_weapons
 
 smoking_barrel:0
     weight:20
     damage:15
-    damage_type:0
+    dmg_type:0
     uses:-1
     min_range:2
     max_range:5
+
+#end
+
 
 #top_weapons
 
 fire_hose:0
     weight:20
     damage:20
-    damage_type:1
+    dmg_type:1
     uses:2
     min_range:3
     max_range:7
@@ -52,37 +61,51 @@ fire_hose:0
     cooling_damage:10
     max_heat_damage:5
 
+#end
+
+
 #teleport_modules
 
 public_transportation:0
     weight:10
     damage:10
-    damage_type:2
+    dmg_type:2
     energy_damage:5
+
+#end
+
 
 #charge_modules
 
 royal_cavalry:0
     weight:10
     damage:15
-    damage_type:0
+    dmg_type:0
     heat_cost:5
 
-#grapple_modules
 
+#end
+
+
+#grapple_modules
 the_batman:0
     weight:10
     damage:15
-    damage_type:0
+    dmg_type:0
     energy_cost:5
+#end
+
 
 #drones
-    
+
 the_bippy:0
     weight:5
     damage:5
-    damage_type:2
+    dmg_type:2
     energy_cost:1
+
+#end
+
 
 #modules
 
@@ -96,4 +119,5 @@ large_battery:1
 
 titanium_plating:2
     weight:5
-    health:25
+    hp:25
+#end

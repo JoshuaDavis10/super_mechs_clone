@@ -5,7 +5,7 @@
 #define LOGGER_ENABLE_WARNING 1
 #define LOGGER_ENABLE_INFO 1
 #define LOGGER_ENABLE_DEBUG 1
-#define LOGGER_ENABLE_TRACE 1
+#define LOGGER_ENABLE_TRACE 1 
 
 enum {
     LOG_ERROR = 0,
@@ -16,11 +16,6 @@ enum {
 };
 
 void log_message(u32 msg_type, const char* msg, ...);
-
-#define LOGGER_ENABLE_WARNING 1
-#define LOGGER_ENABLE_INFO 1
-#define LOGGER_ENABLE_DEBUG 1
-#define LOGGER_ENABLE_TRACE 1
 
 #define LERROR(message, ...); log_message(LOG_ERROR, message, ##__VA_ARGS__)
 

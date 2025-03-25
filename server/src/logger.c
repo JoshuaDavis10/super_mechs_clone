@@ -19,7 +19,7 @@ void log_message(u32 msg_type, const char* msg, ...) {
             printf("\e[0;33m[WARN]: %s\e[0m\n", output);
             break;
         case LOG_INFO:
-            printf("\e[0;32m[INFO] : %s\e[0m\n", output);
+            printf("\e[0;32m[INFO]: %s\e[0m\n", output);
             break;
         case LOG_DEBUG:
             printf("\e[0;34m[DEBUG]: %s\e[0m\n", output);
