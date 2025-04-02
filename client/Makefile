@@ -1,7 +1,7 @@
 CC:=gcc
 SRCDIR:=src
 OBJDIR:=obj
-BIN:=bin/client
+BIN:=bin/client.exe
 BINDIR:=bin
 LFLAGS:=-lWs2_32 -lm -lraylib -lopengl32 -lgdi32 -lwinmm
 
@@ -15,7 +15,7 @@ $(BIN): $(OBJECTS) | $(BINDIR)
 $(BINDIR):
 	@mkdir bin
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c $(OBJDIR)
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
 	@echo compiling $<...
 	@$(CC) $(CFLAGS) -c $< -o $@
 
