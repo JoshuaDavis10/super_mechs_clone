@@ -5,24 +5,80 @@
 #include "socket.h"
 #include "logger.h"
 
+//#include <mysql/mysql.h>
 #include <time.h>
 
-int main() {
+int main(int argc, char** argv) {
+
+    /*
+    MYSQL *conn;
+    MYSQL_RES *res;
+    MYSQL_ROW row;
+
+    char* server = "localhost";
+    char* user = "jdavis";
+    char* database = "super_mechs_db";
+
+    conn = mysql_init(NULL);
+
+    //TODO: print usage if they don't input password
+    if(!mysql_real_connect(conn, server, user, argv[1], database, 0, NULL, 0)) {
+        LERROR("%s\n", mysql_error(conn));
+        exit(1);
+    }
+
+    if(mysql_query(conn, "show tables")) {
+        LERROR("%s\n", mysql_error(conn));
+        exit(1);
+    }
+
+    res = mysql_use_result(conn);
+
+    LINFO("MySQL Tables in mysql database");
+    while((row = mysql_fetch_row(res)) != NULL) { LINFO("%s", row[0]); }
+
+    mysql_free_result(res);
+    mysql_close(conn);
+    */
+
+
     clock_t start, end;
     start = clock();
 
-    init_game_data();
-    load_item_data();
+    if(!init_game_data()) {
+        LERROR("failed to initialize game data. terminating program...");
+        free_socket();
+        free_item_data();
+        free_game_data();
+        return -1;
+    }
+    if(!load_item_data()) {
+        LERROR("failed to load item data. terminating program...");
+        free_socket();
+        free_item_data();
+        free_game_data();
+        return -1;
+    }
+
+    LINFO("server startup complete.");
+
+    if(!init_sock_conn()) {
+        LERROR("failed to initialize socket connection. terminating program...");
+        free_socket();
+        free_item_data();
+        free_game_data();
+        return -1;
+    }
+    if(!load_game_data()) {
+        LERROR("failed to load game data. terminating program...");
+        free_socket();
+        free_item_data();
+        free_game_data();
+        return -1;
+    }
 
     end = clock();
-    LINFO("server startup complete.");
     LTRACE("cpu time used: %.2lfms", (((double)(end-start))/CLOCKS_PER_SEC) * 1000);
-
-    init_sock_conn();
-    send_msg("*message from server*", P1);
-    send_msg("*message from server*", P2);
-    //TODO: load_game_data();  <-- load data from clients into game_data
-
 
     /*
     char command[MAX_MESSAGE_SIZE];
@@ -37,7 +93,6 @@ int main() {
     }
     */
 
-    //TODO: close socket
     free_socket();
     free_item_data();
     free_game_data();

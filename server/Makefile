@@ -4,7 +4,7 @@ OBJDIR:=obj
 BIN:=bin/server
 BINDIR:=bin
 CFLAGS:= -fsanitize=address -std=gnu99 -Wall -Werror
-LFLAGS:= -fsanitize=address
+LFLAGS:= -fsanitize=address -lmysqlclient
 
 SOURCES=$(wildcard $(SRCDIR)/*.c)
 OBJECTS=$(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(wildcard $(SRCDIR)/*.c))

@@ -19,14 +19,13 @@
 
 typedef struct {
     i32 client_fd[2];
+    i32 sockfd;
 } connection_info;
 
 static connection_info* ci = 0;
 
 void* get_in_addr(struct sockaddr* sa);
 i32 setup_socket();
-
-//TODO: close socket
 
 u8 init_sock_conn() {
     _ASSERT(ci == 0);
@@ -35,7 +34,7 @@ u8 init_sock_conn() {
     memset(ci, 0, sizeof(connection_info));
     LTRACE("memory used for socket: %lu", sizeof(connection_info));
 
-    int sockfd = setup_socket();
+    ci->sockfd = setup_socket();
     LTRACE("socket created.");
     LINFO("waiting for clients to connect...");
 
@@ -45,11 +44,11 @@ u8 init_sock_conn() {
     int client_one_fd, client_two_fd; //ID for client socket
 
     //accept blocks until a connection comes in
-    client_one_fd = accept(sockfd, (struct sockaddr*)&client_one_addr, &client_socket_size);
+    client_one_fd = accept(ci->sockfd, (struct sockaddr*)&client_one_addr, &client_socket_size);
     _ASSERT(client_one_fd != -1);
     LINFO("player 1 successfully connected.");
 
-    client_two_fd = accept(sockfd, (struct sockaddr*)&client_two_addr, &client_socket_size);
+    client_two_fd = accept(ci->sockfd, (struct sockaddr*)&client_two_addr, &client_socket_size);
     _ASSERT(client_two_fd != -1);
     LINFO("player 2 successfully connected.");
 
@@ -60,13 +59,14 @@ u8 init_sock_conn() {
 
 void free_socket() {
     _ASSERT(ci != 0);
+    close(ci->sockfd);
     free(ci);
     ci = 0;
     LINFO("uninitialized socket info");
 }
 
 u8 send_msg(const char* msg, i32 client) {
-    LTRACE("sending message: %s.", msg);
+    LTRACE("sending message to P%d: %s", client+1, msg);
     if(send(ci->client_fd[client], msg, strlen(msg), 0) == -1) { _ASSERT(0); }
     return true;
 }

@@ -1,10 +1,14 @@
 #include "game_data.h"
-#include "asserts.h"
 
+#include "asserts.h"
 #include "logger.h"
+#include "socket.h"
+#include "item_data.h"
+#include "utils.h"
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 enum {
     //weapon use requests
@@ -47,15 +51,389 @@ u32 get_turn() {
     return g_data->turn;
 }
 
-u8 load_game_data() {
-    //TODO: load game data from clients
-    // - start with player 1, ask for items, receive items in loop, process each item
-    // - send an ACK after each item is processed, or like an error if there's an issue
-    // - store items in a list for each player so that u can send each players' items to their opponent later
-    // - do same for player 2
+u8 load_torso_to_game_data(item_torso t, i32 player) {
+    g_data->d_dynamic[player].hp += t.hp; 
+    g_data->d_static[player].max_hp += t.hp;
+    g_data->d_dynamic[player].heat += t.heat;
+    g_data->d_dynamic[player].max_heat += t.heat;
+    g_data->d_dynamic[player].cooling += t.cooling;
+    g_data->d_dynamic[player].energy += t.energy;
+    g_data->d_dynamic[player].max_energy += t.energy;
+    g_data->d_dynamic[player].energy_regen += t.energy_regen;
+    g_data->d_dynamic[player].phys_res+= t.phys_res;
+    g_data->d_dynamic[player].heat_res+= t.heat_res;
+    g_data->d_dynamic[player].energy_res+= t.energy_res;
+    return true;
+}
 
-    //TODO: send each player all items that the other player has
-    // - just run through the list that was saved while getting the items and send them to respective clients
+u8 load_leg_to_game_data(item_leg t, i32 player) {
+    g_data->d_dynamic[player].weapon_uses[REQ_S] = t.uses;
+    g_data->d_dynamic[player].hp = t.hp;
+    g_data->d_static[player].max_hp = t.hp;
+
+    g_data->d_static[player].weapons[REQ_S].damage = t.damage;
+    g_data->d_static[player].weapons[REQ_S].heat_cost = t.heat_cost;
+    g_data->d_static[player].weapons[REQ_S].heat_damage = t.heat_damage;
+    g_data->d_static[player].weapons[REQ_S].max_heat_damage = t.max_heat_damage;
+    g_data->d_static[player].weapons[REQ_S].cooling_damage = t.cooling_damage;
+    g_data->d_static[player].weapons[REQ_S].energy_cost = t.energy_cost;
+    g_data->d_static[player].weapons[REQ_S].energy_damage = t.energy_damage;
+    g_data->d_static[player].weapons[REQ_S].max_energy_damage = t.max_energy_damage;
+    g_data->d_static[player].weapons[REQ_S].regen_damage = t.regen_damage;
+    g_data->d_static[player].weapons[REQ_S].phys_res_dmg = t.phys_res_dmg;
+    g_data->d_static[player].weapons[REQ_S].heat_res_dmg = t.heat_res_dmg;
+    g_data->d_static[player].weapons[REQ_S].energy_res_dmg = t.energy_res_dmg;
+    g_data->d_static[player].weapons[REQ_S].displace = t.displace;
+    g_data->d_static[player].weapons[REQ_S].dmg_type = t.dmg_type;
+    return true;
+}
+
+u8 load_side_weapon_to_game_data(item_side_weapon t, i32 player, i32 sw_count) {
+    g_data->d_dynamic[player].weapon_uses[REQ_W1 + sw_count - 1] = t.uses;
+
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].min_range = t.min_range;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].max_range = t.max_range;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].damage = t.damage;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].heat_cost = t.heat_cost;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].heat_damage = t.heat_damage;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].max_heat_damage = t.max_heat_damage;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].cooling_damage = t.cooling_damage;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].energy_cost = t.energy_cost;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].energy_damage = t.energy_damage;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].max_energy_damage = t.max_energy_damage;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].regen_damage = t.regen_damage;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].phys_res_dmg = t.phys_res_dmg;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].heat_res_dmg = t.heat_res_dmg;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].energy_res_dmg = t.energy_res_dmg;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].displace = t.displace;
+    g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].dmg_type = t.dmg_type;
+    return true;
+}
+
+u8 load_top_weapon_to_game_data(item_top_weapon t, i32 player, i32 tw_count) {
+    g_data->d_dynamic[player].weapon_uses[REQ_W5 + tw_count - 1] = t.uses;
+
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].min_range = t.min_range;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].max_range = t.max_range;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].damage = t.damage;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].heat_cost = t.heat_cost;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].heat_damage = t.heat_damage;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].max_heat_damage = t.max_heat_damage;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].cooling_damage = t.cooling_damage;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].energy_cost = t.energy_cost;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].energy_damage = t.energy_damage;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].max_energy_damage = t.max_energy_damage;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].regen_damage = t.regen_damage;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].phys_res_dmg = t.phys_res_dmg;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].heat_res_dmg = t.heat_res_dmg;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].energy_res_dmg = t.energy_res_dmg;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].displace = t.displace;
+    g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].dmg_type = t.dmg_type;
+    return true;
+}
+
+u8 load_teleport_module_to_game_data(item_teleport_module t, i32 player) {
+    g_data->d_dynamic[player].weapon_uses[REQ_T0] = t.uses;
+
+    g_data->d_static[player].weapons[REQ_T0].damage = t.damage;
+    g_data->d_static[player].weapons[REQ_T0].heat_cost = t.heat_cost;
+    g_data->d_static[player].weapons[REQ_T0].heat_damage = t.heat_damage;
+    g_data->d_static[player].weapons[REQ_T0].max_heat_damage = t.max_heat_damage;
+    g_data->d_static[player].weapons[REQ_T0].cooling_damage = t.cooling_damage;
+    g_data->d_static[player].weapons[REQ_T0].energy_cost = t.energy_cost;
+    g_data->d_static[player].weapons[REQ_T0].energy_damage = t.energy_damage;
+    g_data->d_static[player].weapons[REQ_T0].max_energy_damage = t.max_energy_damage;
+    g_data->d_static[player].weapons[REQ_T0].regen_damage = t.regen_damage;
+    g_data->d_static[player].weapons[REQ_T0].phys_res_dmg = t.phys_res_dmg;
+    g_data->d_static[player].weapons[REQ_T0].heat_res_dmg = t.heat_res_dmg;
+    g_data->d_static[player].weapons[REQ_T0].energy_res_dmg = t.energy_res_dmg;
+    g_data->d_static[player].weapons[REQ_T0].dmg_type = t.dmg_type;
+    return true;
+}
+
+u8 load_charge_module_to_game_data(item_charge_module t, i32 player) {
+    g_data->d_dynamic[player].weapon_uses[REQ_CH] = t.uses;
+
+    g_data->d_static[player].weapons[REQ_CH].damage = t.damage;
+    g_data->d_static[player].weapons[REQ_CH].heat_cost = t.heat_cost;
+    g_data->d_static[player].weapons[REQ_CH].heat_damage = t.heat_damage;
+    g_data->d_static[player].weapons[REQ_CH].max_heat_damage = t.max_heat_damage;
+    g_data->d_static[player].weapons[REQ_CH].cooling_damage = t.cooling_damage;
+    g_data->d_static[player].weapons[REQ_CH].energy_cost = t.energy_cost;
+    g_data->d_static[player].weapons[REQ_CH].energy_damage = t.energy_damage;
+    g_data->d_static[player].weapons[REQ_CH].max_energy_damage = t.max_energy_damage;
+    g_data->d_static[player].weapons[REQ_CH].regen_damage = t.regen_damage;
+    g_data->d_static[player].weapons[REQ_CH].phys_res_dmg = t.phys_res_dmg;
+    g_data->d_static[player].weapons[REQ_CH].heat_res_dmg = t.heat_res_dmg;
+    g_data->d_static[player].weapons[REQ_CH].energy_res_dmg = t.energy_res_dmg;
+    g_data->d_static[player].weapons[REQ_CH].dmg_type = t.dmg_type;
+    return true;
+    return true;
+}
+
+u8 load_grapple_module_to_game_data(item_grapple_module t, i32 player) {
+    g_data->d_dynamic[player].weapon_uses[REQ_G] = t.uses;
+
+    g_data->d_static[player].weapons[REQ_G].damage = t.damage;
+    g_data->d_static[player].weapons[REQ_G].heat_cost = t.heat_cost;
+    g_data->d_static[player].weapons[REQ_G].heat_damage = t.heat_damage;
+    g_data->d_static[player].weapons[REQ_G].max_heat_damage = t.max_heat_damage;
+    g_data->d_static[player].weapons[REQ_G].cooling_damage = t.cooling_damage;
+    g_data->d_static[player].weapons[REQ_G].energy_cost = t.energy_cost;
+    g_data->d_static[player].weapons[REQ_G].energy_damage = t.energy_damage;
+    g_data->d_static[player].weapons[REQ_G].max_energy_damage = t.max_energy_damage;
+    g_data->d_static[player].weapons[REQ_G].regen_damage = t.regen_damage;
+    g_data->d_static[player].weapons[REQ_G].phys_res_dmg = t.phys_res_dmg;
+    g_data->d_static[player].weapons[REQ_G].heat_res_dmg = t.heat_res_dmg;
+    g_data->d_static[player].weapons[REQ_G].energy_res_dmg = t.energy_res_dmg;
+    g_data->d_static[player].weapons[REQ_G].dmg_type = t.dmg_type;
+    return true;
+}
+
+u8 load_drone_to_game_data(item_drone t, i32 player) {
+    g_data->d_static[player].weapons[REQ_T0 + 1].damage = t.damage;
+    g_data->d_static[player].weapons[REQ_T0 + 1].heat_cost = t.heat_cost;
+    g_data->d_static[player].weapons[REQ_T0 + 1].heat_damage = t.heat_damage;
+    g_data->d_static[player].weapons[REQ_T0 + 1].max_heat_damage = t.max_heat_damage;
+    g_data->d_static[player].weapons[REQ_T0 + 1].cooling_damage = t.cooling_damage;
+    g_data->d_static[player].weapons[REQ_T0 + 1].energy_cost = t.energy_cost;
+    g_data->d_static[player].weapons[REQ_T0 + 1].energy_damage = t.energy_damage;
+    g_data->d_static[player].weapons[REQ_T0 + 1].max_energy_damage = t.max_energy_damage;
+    g_data->d_static[player].weapons[REQ_T0 + 1].regen_damage = t.regen_damage;
+    g_data->d_static[player].weapons[REQ_T0 + 1].phys_res_dmg = t.phys_res_dmg;
+    g_data->d_static[player].weapons[REQ_T0 + 1].heat_res_dmg = t.heat_res_dmg;
+    g_data->d_static[player].weapons[REQ_T0 + 1].energy_res_dmg = t.energy_res_dmg;
+    g_data->d_static[player].weapons[REQ_T0 + 1].dmg_type = t.dmg_type;
+    return true;
+}
+
+u8 load_module_to_game_data(item_module t, i32 player, i32 m_count) {
+    g_data->d_static[player].max_hp += t.hp;
+
+    g_data->d_dynamic[player].hp += t.hp;
+    g_data->d_dynamic[player].heat += t.heat;
+    g_data->d_dynamic[player].max_heat += t.heat;
+    g_data->d_dynamic[player].cooling += t.cooling;
+    g_data->d_dynamic[player].energy += t.energy;
+    g_data->d_dynamic[player].max_energy += t.energy;
+    g_data->d_dynamic[player].energy_regen += t.energy_regen;
+    g_data->d_dynamic[player].phys_res += t.phys_res;
+    g_data->d_dynamic[player].heat_res += t.heat_res;
+    g_data->d_dynamic[player].energy_res += t.energy_res;
+    return true;
+}
+
+u8 load_item_to_game_data(i32 item_type, i32 item_id, i32* total_weight, i32 player, i32 sw_count, i32 tw_count, i32 m_count) {
+    switch(item_type) {
+        case I_TORSO:
+            item_torso t_temp;
+            t_temp = get_torso(item_id);
+            (*total_weight)+=t_temp.weight;
+            load_torso_to_game_data(t_temp, player);
+            break;
+        case I_LEG:
+            item_leg l_temp;
+            l_temp = get_leg(item_id);
+            (*total_weight)+=l_temp.weight;
+            load_leg_to_game_data(l_temp, player);
+            break;
+        case I_SIDE_WEAPON:
+            item_side_weapon sw_temp;
+            sw_temp = get_side_weapon(item_id);
+            (*total_weight)+=sw_temp.weight;
+            load_side_weapon_to_game_data(sw_temp, player, sw_count);
+            break;
+        case I_TOP_WEAPON:
+            item_top_weapon tw_temp;
+            tw_temp = get_top_weapon(item_id);
+            (*total_weight)+=tw_temp.weight;
+            load_top_weapon_to_game_data(tw_temp, player, tw_count);
+            break;
+        case I_TELEPORT_MODULE:
+            item_teleport_module tm_temp;
+            tm_temp = get_teleport_module(item_id);
+            (*total_weight)+=tm_temp.weight;
+            load_teleport_module_to_game_data(tm_temp, player);
+            break;
+        case I_CHARGE_MODULE:
+            item_charge_module cm_temp;
+            cm_temp = get_charge_module(item_id);
+            (*total_weight)+=cm_temp.weight;
+            load_charge_module_to_game_data(cm_temp, player);
+            break;
+        case I_GRAPPLE_MODULE:
+            item_grapple_module gm_temp;
+            gm_temp = get_grapple_module(item_id);
+            (*total_weight)+=gm_temp.weight;
+            load_grapple_module_to_game_data(gm_temp, player);
+            break;
+        case I_DRONE:
+            item_drone d_temp;
+            d_temp = get_drone(item_id);
+            (*total_weight)+=d_temp.weight;
+            load_drone_to_game_data(d_temp, player);
+            break;
+        case I_MODULE:
+            item_module m_temp;
+            m_temp = get_module(item_id);
+            (*total_weight)+=m_temp.weight;
+            load_module_to_game_data(m_temp, player, m_count);
+            break;
+    }
+    if((*total_weight) > 2000)
+        return false;
+    return true;
+}
+
+void check_items(char* items_list, char* result, i32 player) {
+    char item_str_buf[MAX_MESSAGE_SIZE];
+    char item_list_buffer[MAX_MESSAGE_SIZE];
+    char *item_str, *id_str, *type_str, *saveptr1, *saveptr2; 
+
+    i32 item_id;
+    i32 item_type;
+
+    i32 t_count = 0;
+    i32 l_count = 0;
+    i32 tw_count = 0;
+    i32 sw_count = 0;
+    i32 tm_count = 0;
+    i32 cm_count = 0;
+    i32 gm_count = 0;
+    i32 d_count = 0;
+    i32 m_count = 0;
+    i32 total_weight = 0;
+
+    strcpy(item_list_buffer, items_list);
+
+    item_str = strtok_r(item_list_buffer, ",", &saveptr1);
+    while(item_str != NULL) {
+
+        strcpy(item_str_buf, item_str);
+
+        type_str = strtok_r(item_str_buf, "-", &saveptr2);
+        id_str = strtok_r(NULL, "-", &saveptr2);
+
+        if(strcmp(type_str, "T") == 0) {
+            if(t_count >= 1) {
+                snprintf(result, MAX_MESSAGE_SIZE, "invalid item: %s (cannot have more than 1 torsos)", item_str);
+                return;
+            }
+            item_type = I_TORSO;
+            t_count++;
+        }
+        else if(strcmp(type_str, "L") == 0) {
+            if(l_count >= 1) {
+                snprintf(result, MAX_MESSAGE_SIZE, "invalid item: %s (cannot have more than 1 legs)", item_str);
+                return;
+            }
+            item_type = I_LEG;
+            l_count++;
+        }
+        else if(strcmp(type_str, "SW") == 0) {
+            if(sw_count >= 4) {
+                snprintf(result, MAX_MESSAGE_SIZE, "invalid item: %s (cannot have more than 4 side weapons)", item_str);
+                return;
+            }
+            item_type = I_SIDE_WEAPON;
+            sw_count++;
+        }
+        else if(strcmp(type_str, "TW") == 0) {
+            if(tw_count >= 2) {
+                snprintf(result, MAX_MESSAGE_SIZE, "invalid item: %s (cannot have more than 2 top weapons)", item_str);
+                return;
+            }
+            item_type = I_TOP_WEAPON;
+            tw_count++;
+        }
+        else if(strcmp(type_str, "TM") == 0) {
+            if(tm_count >= 1) {
+                snprintf(result, MAX_MESSAGE_SIZE, "invalid item: %s (cannot have more than 1 teleporters)", item_str);
+                return;
+            }
+            item_type = I_TELEPORT_MODULE;
+            tm_count++;
+        }
+        else if(strcmp(type_str, "CM") == 0) {
+            if(cm_count >= 1) {
+                snprintf(result, MAX_MESSAGE_SIZE, "invalid item: %s (cannot have more than 1 charge modules)", item_str);
+                return;
+            }
+            item_type = I_CHARGE_MODULE;
+            cm_count++;
+        }
+        else if(strcmp(type_str, "GM") == 0) {
+            if(gm_count >= 1) {
+                snprintf(result, MAX_MESSAGE_SIZE, "invalid item: %s (cannot have more than 1 grapple modules)", item_str);
+                return;
+            }
+            item_type = I_GRAPPLE_MODULE;
+            gm_count++;
+        }
+        else if(strcmp(type_str, "D") == 0) {
+            if(d_count >= 1) {
+                snprintf(result, MAX_MESSAGE_SIZE, "invalid item: %s (cannot have more than 1 drones)", item_str);
+                return;
+            }
+            item_type = I_DRONE;
+            d_count++;
+        }
+        else if(strcmp(type_str, "M") == 0) {
+            if(m_count >= 8) {
+                snprintf(result, MAX_MESSAGE_SIZE, "invalid item: %s (cannot have more than 8 modules)", item_str);
+                return;
+            }
+            item_type = I_MODULE;
+            m_count++;
+        }
+        else {
+            snprintf(result, MAX_MESSAGE_SIZE, "invalid item: %s (invalid item type: %s)", item_str, type_str);
+            return;
+        }
+        
+
+        if(!is_number(id_str)) {
+            snprintf(result, MAX_MESSAGE_SIZE, "invalid item: %s (invalid item id: %s)", item_str, id_str);
+            return;
+        }
+        item_id = atoi(id_str);
+        
+        if(!load_item_to_game_data(item_type, item_id, &total_weight, player, sw_count, tw_count, m_count)) {
+            snprintf(result, MAX_MESSAGE_SIZE, "invalid item: %s (overweight mech)", item_str);
+            return;
+        }
+        LTRACE("loaded item: %s-%s", type_str, id_str);
+        item_str = strtok_r(NULL, ",", &saveptr1);
+    }
+
+    strcpy(result, "success");
+}
+
+u8 load_game_data() {
+    char buffer_p1[MAX_MESSAGE_SIZE];
+    char buffer_p2[MAX_MESSAGE_SIZE];
+    char result[MAX_MESSAGE_SIZE];
+
+    recv_msg(buffer_p1, P1);
+    check_items(buffer_p1, result, P1);
+    send_msg(result, P1);
+    if(strcmp(result, "success") != 0) {
+        send_msg(result, P2);
+        LERROR("%s", result);
+        return false;
+    }
+
+    recv_msg(buffer_p2, P2);
+    check_items(buffer_p2, result, P2);
+    send_msg(result, P2);
+    if(strcmp(result, "success") != 0) {
+        send_msg(result, P1);
+        LERROR("%s", result);
+        return false;
+    }
+
+    send_msg(buffer_p1, P2);
+    send_msg(buffer_p2, P1);
     return true;
 }
 

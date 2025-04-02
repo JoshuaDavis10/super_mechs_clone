@@ -3,10 +3,10 @@
 #include "asserts.h"
 #include "defines.h"
 #include "files.h"
+#include "utils.h"
 
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 const char* item_str_list[] = {"torsos", "legs", "side_weapons", "top_weapons", "teleport_modules", "charge_modules", 
                                "grapple_modules", "drones", "modules"}; 
@@ -36,17 +36,6 @@ u8 load_charge_module_data(u32 count);
 u8 load_grapple_module_data(u32 count);
 u8 load_drone_data();
 u8 load_module_data();
-
-u8 is_number(const char* str) {
-    u32 length = strlen(str);
-    if(!isdigit(str[0]) && str[0] != '-')
-        return false;
-    for(int i = 1; i < length; i++) {
-        if(!isdigit(str[i]))
-            return false;
-    }
-    return true;
-}
 
 u32 get_item_count(u32 item_type_index) {
     char item_type_str[MAX_LINE_SIZE];
