@@ -19,7 +19,7 @@ big_daddy:0
     phys_res:5
     energy_res:5
     heat_res:5
-
+    cooling:10
 #end
 
 
@@ -70,6 +70,7 @@ public_transportation:0
     weight:10
     damage:10
     dmg_type:2
+    uses:1
     energy_damage:5
 
 #end
@@ -81,7 +82,9 @@ royal_cavalry:0
     weight:10
     damage:15
     dmg_type:0
+    uses:1
     heat_cost:5
+    energy_cost:21
 
 
 #end
@@ -92,6 +95,7 @@ the_batman:0
     weight:10
     damage:15
     dmg_type:0
+    uses:1
     energy_cost:5
 #end
 
@@ -100,7 +104,7 @@ the_batman:0
 
 the_bippy:0
     weight:5
-    damage:5
+    damage:10
     dmg_type:2
     energy_cost:1
 

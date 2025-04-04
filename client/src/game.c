@@ -105,6 +105,6 @@ u8 get_items_from_server(char* items_list_opp) {
 }
 
 u8 load_game_state(const char* items_list_player, const char* items_list_opp) {
-    //TODO
+    //TODO this will be a lot of copying server code from game_data/item_data
     return true;
 }

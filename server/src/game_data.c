@@ -9,6 +9,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
+
+#define NUM_POSITIONS 10
 
 enum {
     //weapon use requests
@@ -54,7 +57,6 @@ u32 get_turn() {
 u8 load_torso_to_game_data(item_torso t, i32 player) {
     g_data->d_dynamic[player].hp += t.hp; 
     g_data->d_static[player].max_hp += t.hp;
-    g_data->d_dynamic[player].heat += t.heat;
     g_data->d_dynamic[player].max_heat += t.heat;
     g_data->d_dynamic[player].cooling += t.cooling;
     g_data->d_dynamic[player].energy += t.energy;
@@ -68,9 +70,11 @@ u8 load_torso_to_game_data(item_torso t, i32 player) {
 
 u8 load_leg_to_game_data(item_leg t, i32 player) {
     g_data->d_dynamic[player].weapon_uses[REQ_S] = t.uses;
-    g_data->d_dynamic[player].hp = t.hp;
-    g_data->d_static[player].max_hp = t.hp;
+    g_data->d_dynamic[player].hp += t.hp;
+    g_data->d_static[player].max_hp += t.hp;
 
+    g_data->d_static[player].weapons[REQ_S].min_range = 1;
+    g_data->d_static[player].weapons[REQ_S].max_range= 1;
     g_data->d_static[player].weapons[REQ_S].damage = t.damage;
     g_data->d_static[player].weapons[REQ_S].heat_cost = t.heat_cost;
     g_data->d_static[player].weapons[REQ_S].heat_damage = t.heat_damage;
@@ -135,6 +139,8 @@ u8 load_top_weapon_to_game_data(item_top_weapon t, i32 player, i32 tw_count) {
 u8 load_teleport_module_to_game_data(item_teleport_module t, i32 player) {
     g_data->d_dynamic[player].weapon_uses[REQ_T0] = t.uses;
 
+    g_data->d_static[player].weapons[REQ_T0].min_range = 0;
+    g_data->d_static[player].weapons[REQ_T0].max_range= 9;
     g_data->d_static[player].weapons[REQ_T0].damage = t.damage;
     g_data->d_static[player].weapons[REQ_T0].heat_cost = t.heat_cost;
     g_data->d_static[player].weapons[REQ_T0].heat_damage = t.heat_damage;
@@ -148,12 +154,15 @@ u8 load_teleport_module_to_game_data(item_teleport_module t, i32 player) {
     g_data->d_static[player].weapons[REQ_T0].heat_res_dmg = t.heat_res_dmg;
     g_data->d_static[player].weapons[REQ_T0].energy_res_dmg = t.energy_res_dmg;
     g_data->d_static[player].weapons[REQ_T0].dmg_type = t.dmg_type;
+    g_data->d_static[player].weapons[REQ_T0].displace = DISPLACE_TELEPORT;
     return true;
 }
 
 u8 load_charge_module_to_game_data(item_charge_module t, i32 player) {
     g_data->d_dynamic[player].weapon_uses[REQ_CH] = t.uses;
 
+    g_data->d_static[player].weapons[REQ_CH].min_range = 0;
+    g_data->d_static[player].weapons[REQ_CH].max_range= 9;
     g_data->d_static[player].weapons[REQ_CH].damage = t.damage;
     g_data->d_static[player].weapons[REQ_CH].heat_cost = t.heat_cost;
     g_data->d_static[player].weapons[REQ_CH].heat_damage = t.heat_damage;
@@ -167,13 +176,15 @@ u8 load_charge_module_to_game_data(item_charge_module t, i32 player) {
     g_data->d_static[player].weapons[REQ_CH].heat_res_dmg = t.heat_res_dmg;
     g_data->d_static[player].weapons[REQ_CH].energy_res_dmg = t.energy_res_dmg;
     g_data->d_static[player].weapons[REQ_CH].dmg_type = t.dmg_type;
-    return true;
+    g_data->d_static[player].weapons[REQ_CH].displace = DISPLACE_CHARGE;
     return true;
 }
 
 u8 load_grapple_module_to_game_data(item_grapple_module t, i32 player) {
     g_data->d_dynamic[player].weapon_uses[REQ_G] = t.uses;
 
+    g_data->d_static[player].weapons[REQ_G].min_range = 0;
+    g_data->d_static[player].weapons[REQ_G].max_range= 9;
     g_data->d_static[player].weapons[REQ_G].damage = t.damage;
     g_data->d_static[player].weapons[REQ_G].heat_cost = t.heat_cost;
     g_data->d_static[player].weapons[REQ_G].heat_damage = t.heat_damage;
@@ -187,10 +198,13 @@ u8 load_grapple_module_to_game_data(item_grapple_module t, i32 player) {
     g_data->d_static[player].weapons[REQ_G].heat_res_dmg = t.heat_res_dmg;
     g_data->d_static[player].weapons[REQ_G].energy_res_dmg = t.energy_res_dmg;
     g_data->d_static[player].weapons[REQ_G].dmg_type = t.dmg_type;
+    g_data->d_static[player].weapons[REQ_G].displace = DISPLACE_GRAPPLE;
     return true;
 }
 
 u8 load_drone_to_game_data(item_drone t, i32 player) {
+    g_data->d_static[player].weapons[REQ_T0 + 1].min_range = 0;
+    g_data->d_static[player].weapons[REQ_T0 + 1].max_range= 9;
     g_data->d_static[player].weapons[REQ_T0 + 1].damage = t.damage;
     g_data->d_static[player].weapons[REQ_T0 + 1].heat_cost = t.heat_cost;
     g_data->d_static[player].weapons[REQ_T0 + 1].heat_damage = t.heat_damage;
@@ -211,7 +225,6 @@ u8 load_module_to_game_data(item_module t, i32 player, i32 m_count) {
     g_data->d_static[player].max_hp += t.hp;
 
     g_data->d_dynamic[player].hp += t.hp;
-    g_data->d_dynamic[player].heat += t.heat;
     g_data->d_dynamic[player].max_heat += t.heat;
     g_data->d_dynamic[player].cooling += t.cooling;
     g_data->d_dynamic[player].energy += t.energy;
@@ -413,6 +426,8 @@ u8 load_game_data() {
     char buffer_p1[MAX_MESSAGE_SIZE];
     char buffer_p2[MAX_MESSAGE_SIZE];
     char result[MAX_MESSAGE_SIZE];
+    char pos_p1[MAX_MESSAGE_SIZE];
+    char pos_p2[MAX_MESSAGE_SIZE];
 
     recv_msg(buffer_p1, P1);
     check_items(buffer_p1, result, P1);
@@ -433,11 +448,31 @@ u8 load_game_data() {
     }
 
     send_msg(buffer_p1, P2);
+    recv_msg(buffer_p1, P2);
+    _ASSERT(strcmp(buffer_p1, "ACK") == 0);
     send_msg(buffer_p2, P1);
+    recv_msg(buffer_p2, P1);
+    _ASSERT(strcmp(buffer_p2, "ACK") == 0);
+
+    g_data->actions = 1;
+
+    srand(time(NULL));
+    g_data->d_dynamic[P1].pos = rand() % NUM_POSITIONS;
+    g_data->d_dynamic[P2].pos = rand() % NUM_POSITIONS;
+    while(g_data->d_dynamic[P2].pos == g_data->d_dynamic[P1].pos) {
+        g_data->d_dynamic[P2].pos = rand() % NUM_POSITIONS;
+    }
+
+    snprintf(pos_p1, MAX_MESSAGE_SIZE, "you:%d,opp:%d", g_data->d_dynamic[P1].pos, g_data->d_dynamic[P2].pos);    
+    send_msg(pos_p1, P1);
+    snprintf(pos_p2, MAX_MESSAGE_SIZE, "you:%d,opp:%d", g_data->d_dynamic[P2].pos, g_data->d_dynamic[P1].pos);    
+    send_msg(pos_p2, P2);
+
     return true;
 }
 
 i8 process_command(const char* cmd) {
+
 
     _ASSERT(g_data != 0);
 
@@ -458,22 +493,32 @@ i8 process_command(const char* cmd) {
     }
 
     i32 move_dist;
-    i32 dist = pos[P1] - pos[P2];
-    _ASSERT_MSG(command < NUM_REQ_STRINGS, cmd); //crash if invalid client command 
+    i32 dist = pos[player] - pos[enemy];
+
+    if(command != REQ_C) {
+        _ASSERT(g_data->d_dynamic[player].heat <= g_data->d_dynamic[player].max_heat);
+    }
+
+    //_ASSERT_MSG(command < NUM_REQ_STRINGS, cmd); //crash if invalid client command 
+    if(command >= NUM_REQ_STRINGS) { return -1; }
     switch(command) {
         //w1-w6 'command' value matches index into weapons array in game_data
         case REQ_W1: case REQ_W2: case REQ_W3: case REQ_W4: case REQ_W5: case REQ_W6: case REQ_S:
         case REQ_G:  case REQ_CH: case REQ_T0: case REQ_T1: case REQ_T2: case REQ_T3: case REQ_T4: 
         case REQ_T5: case REQ_T6: case REQ_T7: case REQ_T8: case REQ_T9:
             u32 w_index = command;
-            if(w_index >= REQ_T0 || w_index <= REQ_T9) { w_index = REQ_T0; }
+            if(w_index >= REQ_T0 && w_index <= REQ_T9) { w_index = REQ_T0; }
+            LDEBUG("command: %d, w_index: %d, uses: %d", command, w_index, g_data->d_dynamic[player].weapon_uses[w_index]);
             _ASSERT_MSG(g_data->d_dynamic[player].weapon_uses[w_index] != 0, "received command to use weapon that has no remaining uses"); //uses check
 
             //range check 
             if(dist < 0) { dist = -dist; }
             _ASSERT_MSG(g_data->d_static[player].weapons[w_index].min_range <= dist && g_data->d_static[player].weapons[w_index].max_range >= dist, 
                         "received command to use weapon that is out of range");
-            
+
+            //cost check
+            _ASSERT(g_data->d_dynamic[player].energy >= g_data->d_static[player].weapons[w_index].energy_cost);             
+
             //process damage based on damage type and enemy resistance
             i32 dmg;
             switch(g_data->d_static[player].weapons[w_index].dmg_type) {
@@ -512,6 +557,7 @@ i8 process_command(const char* cmd) {
             
             //process displacement
             i32 enemy_pos = g_data->d_dynamic[enemy].pos;
+            dist = pos[player] - pos[enemy];
             switch(g_data->d_static[player].weapons[w_index].displace) {
                 case DISPLACE_NONE: break; //do nothing
                 case DISPLACE_KNOCKBACK:
@@ -542,12 +588,12 @@ i8 process_command(const char* cmd) {
                     if(dist < 0) { 
                         g_data->d_dynamic[player].pos = enemy_pos-1; 
                         if(enemy_pos < 9)
-                            g_data->d_dynamic[enemy].pos++;
+                            g_data->d_dynamic[enemy].pos+=1;
                     } //enemy is to player's right
                     if(dist > 0) { 
                         g_data->d_dynamic[player].pos = enemy_pos+1; 
                         if(enemy_pos > 0)
-                            g_data->d_dynamic[enemy].pos--;
+                            g_data->d_dynamic[enemy].pos-=1;
                     } //enemy is to player's left
                     break;
                 case DISPLACE_TELEPORT:
@@ -570,12 +616,16 @@ i8 process_command(const char* cmd) {
             break;
         case REQ_C:
             g_data->d_dynamic[player].heat -= g_data->d_dynamic[player].cooling;
+            if(g_data->d_dynamic[player].heat < 0) {
+                g_data->d_dynamic[player].heat = 0;
+            }
             break;
         case REQ_R1:
         case REQ_R2:
         case REQ_R3:
             move_dist = command - REQ_R1 + 1;
             _ASSERT(g_data->d_dynamic[player].pos + move_dist <= 9);
+            _ASSERT(g_data->d_dynamic[player].pos + move_dist != g_data->d_dynamic[enemy].pos);
             g_data->d_dynamic[player].pos += move_dist;
             break;
         case REQ_L1:
@@ -583,6 +633,7 @@ i8 process_command(const char* cmd) {
         case REQ_L3:
             move_dist = command - REQ_L1 + 1; 
             _ASSERT(g_data->d_dynamic[player].pos - move_dist >= 0);
+            _ASSERT(g_data->d_dynamic[player].pos - move_dist != g_data->d_dynamic[enemy].pos);
             g_data->d_dynamic[player].pos -= move_dist;
             break;
         case REQ_ER:
@@ -633,11 +684,15 @@ i8 process_command(const char* cmd) {
             g_data->d_dynamic[enemy].energy_res   -= g_data->d_static[player].weapons[10].energy_res_dmg;
             LTRACE("player %d's drone attacked", player);
         }
-        _ASSERT(g_data->turn != player);
+        _ASSERT(g_data->turn == player);
+        g_data->d_dynamic[player].energy += g_data->d_dynamic[player].energy_regen;
         g_data->turn = enemy;
         LTRACE("switched turn to player %d", g_data->turn);
         g_data->actions = 2;
     }
-    if(g_data->d_dynamic[enemy].hp <= 0) { return enemy + 1; } //return 1 for P1 win and 2 for P2 win
+    if(g_data->d_dynamic[enemy].hp <= 0) { return player; } //return 1 for P1 win and 2 for P2 win
+
+    LDEBUG("p1 hp: %d\tp2 hp: %d\n\t p1 pos: %d\tp2 pos: %d\n\t p1 heat: %d\tp2 heat: %d\n\t p1 nrg: %d\tp2 nrg: %d", g_data->d_dynamic[P1].hp, g_data->d_dynamic[P2].hp, g_data->d_dynamic[P1].pos, g_data->d_dynamic[P2].pos, g_data->d_dynamic[P1].heat, g_data->d_dynamic[P2].heat, g_data->d_dynamic[P2].energy, g_data->d_dynamic[P2].energy);//TODO: temp
+
     return 0;
 }

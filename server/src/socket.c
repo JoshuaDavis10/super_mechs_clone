@@ -66,8 +66,8 @@ void free_socket() {
 }
 
 u8 send_msg(const char* msg, i32 client) {
-    LTRACE("sending message to P%d: %s", client+1, msg);
     if(send(ci->client_fd[client], msg, strlen(msg), 0) == -1) { _ASSERT(0); }
+    LTRACE("sent message to P%d: %s", client+1, msg);
     return true;
 }
 

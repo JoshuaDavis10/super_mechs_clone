@@ -4,9 +4,11 @@
 #include "item_data.h"
 #include "socket.h"
 #include "logger.h"
+#include "asserts.h"
 
 //#include <mysql/mysql.h>
 #include <time.h>
+#include <string.h>
 
 int main(int argc, char** argv) {
 
@@ -80,18 +82,44 @@ int main(int argc, char** argv) {
     end = clock();
     LTRACE("cpu time used: %.2lfms", (((double)(end-start))/CLOCKS_PER_SEC) * 1000);
 
-    /*
     char command[MAX_MESSAGE_SIZE];
     i8 result;
     u32 turn;
+    u32 opp;
+    recv_msg(command, P1);
+    if(strcmp(command, "start") != 0) { LERROR("P1 failed to start"); return -1; }
+    recv_msg(command, P2);
+    if(strcmp(command, "start") != 0) { LERROR("P2 failed to start"); return -1; }
     while(true) {
         turn = get_turn();
+        LDEBUG("turn: %d", turn);
+        if(turn == P1) { opp = P2; }
+        if(turn == P2) { opp = P1; }
+        send_msg("go", turn);
         recv_msg(command, turn);
         result = process_command(command);
-        if(result == 1) { LINFO("player 1 wins."); break; }
-        if(result == 2) { LINFO("player 2 wins."); break; }
+        if(result == 1) { 
+            LINFO("player 1 wins."); 
+            send_msg("win", P1);
+            send_msg("loss", P2);
+            break; 
+        }
+        else if(result == 2) 
+        { 
+            LINFO("player 2 wins."); 
+            send_msg("loss", P1);
+            send_msg("win", P2);
+            break; 
+        }
+        else if(result == -1) {
+            send_msg("invalid", turn);
+            continue;
+        }
+        send_msg(command, opp);
+        send_msg("valid", turn);
+        recv_msg(command, turn);
+        _ASSERT(strcmp(command, "ACK") == 0);
     }
-    */
 
     free_socket();
     free_item_data();
