@@ -49,15 +49,10 @@ int main(int argc, char** argv) {
 
     if(!init_game_data()) {
         LERROR("failed to initialize game data. terminating program...");
-        free_socket();
-        free_item_data();
-        free_game_data();
         return -1;
     }
     if(!load_item_data()) {
         LERROR("failed to load item data. terminating program...");
-        free_socket();
-        free_item_data();
         free_game_data();
         return -1;
     }
@@ -66,7 +61,6 @@ int main(int argc, char** argv) {
 
     if(!init_sock_conn()) {
         LERROR("failed to initialize socket connection. terminating program...");
-        free_socket();
         free_item_data();
         free_game_data();
         return -1;

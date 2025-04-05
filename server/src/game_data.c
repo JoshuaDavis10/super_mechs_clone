@@ -428,6 +428,7 @@ u8 load_game_data() {
     char result[MAX_MESSAGE_SIZE];
     char pos_p1[MAX_MESSAGE_SIZE];
     char pos_p2[MAX_MESSAGE_SIZE];
+    char turn_buff[MAX_MESSAGE_SIZE];
 
     recv_msg(buffer_p1, P1);
     check_items(buffer_p1, result, P1);
@@ -467,6 +468,23 @@ u8 load_game_data() {
     send_msg(pos_p1, P1);
     snprintf(pos_p2, MAX_MESSAGE_SIZE, "you:%d,opp:%d", g_data->d_dynamic[P2].pos, g_data->d_dynamic[P1].pos);    
     send_msg(pos_p2, P2);
+
+    recv_msg(buffer_p1, P2);
+    _ASSERT(strcmp(buffer_p1, "ACK") == 0);
+    recv_msg(buffer_p2, P1);
+    _ASSERT(strcmp(buffer_p2, "ACK") == 0);
+
+    i32 other_turn;
+    g_data->turn = rand() % 2;
+    snprintf(turn_buff, MAX_MESSAGE_SIZE, "%d", g_data->turn);
+    if(g_data->turn == P1) {
+        other_turn = P2;
+    }
+    else {
+        other_turn = P1;
+    }
+    send_msg("0", g_data->turn);
+    send_msg("1", other_turn);
 
     return true;
 }
@@ -692,7 +710,7 @@ i8 process_command(const char* cmd) {
     }
     if(g_data->d_dynamic[enemy].hp <= 0) { return player; } //return 1 for P1 win and 2 for P2 win
 
-    LDEBUG("p1 hp: %d\tp2 hp: %d\n\t p1 pos: %d\tp2 pos: %d\n\t p1 heat: %d\tp2 heat: %d\n\t p1 nrg: %d\tp2 nrg: %d", g_data->d_dynamic[P1].hp, g_data->d_dynamic[P2].hp, g_data->d_dynamic[P1].pos, g_data->d_dynamic[P2].pos, g_data->d_dynamic[P1].heat, g_data->d_dynamic[P2].heat, g_data->d_dynamic[P2].energy, g_data->d_dynamic[P2].energy);//TODO: temp
+    LDEBUG("p1 hp: %d\tp2 hp: %d\n\t p1 pos: %d\tp2 pos: %d\n\t p1 heat: %d\tp2 heat: %d\n\t p1 nrg: %d\tp2 nrg: %d", g_data->d_dynamic[P1].hp, g_data->d_dynamic[P2].hp, g_data->d_dynamic[P1].pos, g_data->d_dynamic[P2].pos, g_data->d_dynamic[P1].heat, g_data->d_dynamic[P2].heat, g_data->d_dynamic[P1].energy, g_data->d_dynamic[P2].energy);//TODO: temp
 
     return 0;
 }
