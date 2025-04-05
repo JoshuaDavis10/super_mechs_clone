@@ -4,22 +4,19 @@
 #include "logger.h"
 #include "files.h"
 #include "socket.h"
+#include "utils.h"
+#include "game_data.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-static game_state* gstate = 0;
-
 u8 load_items_from_file(const char* filepath, char* items_list);
 u8 send_items_to_server(const char* items_list); 
 u8 get_items_from_server(char* items_list_opp); 
-u8 load_game_state(const char* items_list_player, const char* items_list_opp); 
+u8 load_game_state(char* items_list_player, char* items_list_opp); 
 
 u8 init_game(const char* mech_name) {
-    SM_ASSERT(gstate == 0);
-    gstate = (game_state*)malloc(sizeof(game_state));
-
     char items_buffer_player[MAX_MESSAGE_SIZE]; //TODO: 22 cringe constant
     char items_buffer_opp[MAX_MESSAGE_SIZE]; 
 
@@ -50,14 +47,9 @@ u8 init_game(const char* mech_name) {
 
     LINFO("initialized game state");
 
-    return true;
-}
+    send_msg("start");
 
-void free_game() {
-    SM_ASSERT(gstate != 0);
-    free(gstate);
-    gstate = 0;
-    LINFO("uninitialized game state");
+    return true;
 }
 
 u8 load_items_from_file(const char* mech_name, char* items_list) {
@@ -101,10 +93,39 @@ u8 get_items_from_server(char* items_list_opp) {
     if(!recv_msg(items_list_opp)) {
         return false;
     }
+    send_msg("ACK");
     return true;
 }
 
-u8 load_game_state(const char* items_list_player, const char* items_list_opp) {
-    //TODO this will be a lot of copying server code from game_data/item_data
+u8 load_game_state(char* items_list_player, char* items_list_opp) {
+    char pos_buffer[MAX_MESSAGE_SIZE];
+    char turn_buffer[MAX_MESSAGE_SIZE];
+    if(!recv_msg(pos_buffer)) { return false; }
+
+    char *pos_str, *tok, *pos, *saveptr1, *saveptr2;
+    i32 pos1, pos2;
+    i32 turn;
+
+    pos_str = strtok_r(pos_buffer, ",", &saveptr1);
+    tok = strtok_r(pos_str, ":", &saveptr2);
+    pos = strtok_r(NULL, ":", &saveptr2);
+    SM_ASSERT(is_number(pos));
+    pos1 = atoi(pos);
+
+    pos_str = strtok_r(NULL, ",", &saveptr1);
+    tok = strtok_r(pos_str, ":", &saveptr2);
+    pos = strtok_r(NULL, ":", &saveptr2);
+    SM_ASSERT(is_number(pos));
+    pos2 = atoi(pos);
+
+    send_msg("ACK");
+    if(!recv_msg(turn_buffer)) { return false; }
+    SM_ASSERT(is_number(turn_buffer));
+    turn = atoi(turn_buffer);
+    SM_ASSERT(turn == 0 || turn == 1);
+
+    if(!load_game_data(items_list_player, items_list_opp, pos1, pos2, turn)) {
+        return false;
+    }
     return true;
 }

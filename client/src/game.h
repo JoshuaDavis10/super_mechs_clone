@@ -8,5 +8,3 @@ typedef struct game_state {
 } game_state;
 
 u8 init_game(const char* mech_name);
-void free_game();
-

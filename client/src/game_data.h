@@ -67,7 +67,7 @@ typedef struct game_data {
 
 //return 1 on successful initialize... for now it'll crash otherwise (assertion)
 u8 init_game_data(); 
-u8 load_game_data(char* items_list_player, char* items_list_opp, i32 pos1, i32 pos2);
+u8 load_game_data(char* items_list_player, char* items_list_opp, i32 pos1, i32 pos2, i32 turn);
 void free_game_data(); 
 
 //return -1 on error (as in the request is valid but the action implied by the request can't be carried out)

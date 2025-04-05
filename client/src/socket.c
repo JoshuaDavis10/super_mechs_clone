@@ -76,6 +76,7 @@ u32 recv_msg(char* msg) {
         LERROR("send() returned -1");
         return false;
     }
+    SM_ASSERT(numbytes != 0); //crash if server isn't sending messages
     msg[numbytes] = '\0';
     LDEBUG("received message: %s", msg);
     return true;

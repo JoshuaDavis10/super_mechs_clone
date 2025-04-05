@@ -441,6 +441,7 @@ u8 load_teleport_module_data(u32 count) {
             value = atoi(token);
 
             if(strcmp(attrib, "weight") == 0)                   { teleport_module_list[i_ID].weight = value; }
+            else if(strcmp(attrib, "uses") == 0)                { teleport_module_list[i_ID].uses = value; }
             else if(strcmp(attrib, "damage") == 0)              { teleport_module_list[i_ID].damage = value; }
             else if(strcmp(attrib, "heat_cost") == 0)           { teleport_module_list[i_ID].heat_cost = value; }
             else if(strcmp(attrib, "heat_damage") == 0)         { teleport_module_list[i_ID].heat_damage = value; }
@@ -499,6 +500,7 @@ u8 load_charge_module_data(u32 count) {
             value = atoi(token);
 
             if(strcmp(attrib, "weight") == 0)                   { charge_module_list[i_ID].weight = value; }
+            else if(strcmp(attrib, "uses") == 0)                { charge_module_list[i_ID].uses = value; }
             else if(strcmp(attrib, "damage") == 0)              { charge_module_list[i_ID].damage = value; }
             else if(strcmp(attrib, "heat_cost") == 0)           { charge_module_list[i_ID].heat_cost = value; }
             else if(strcmp(attrib, "heat_damage") == 0)         { charge_module_list[i_ID].heat_damage = value; }
@@ -556,6 +558,7 @@ u8 load_grapple_module_data(u32 count) {
             value = atoi(token);
 
             if(strcmp(attrib, "weight") == 0)                   { grapple_module_list[i_ID].weight = value; }
+            else if(strcmp(attrib, "uses") == 0)                { grapple_module_list[i_ID].uses = value; }
             else if(strcmp(attrib, "damage") == 0)              { grapple_module_list[i_ID].damage = value; }
             else if(strcmp(attrib, "heat_cost") == 0)           { grapple_module_list[i_ID].heat_cost = value; }
             else if(strcmp(attrib, "heat_damage") == 0)         { grapple_module_list[i_ID].heat_damage = value; }
