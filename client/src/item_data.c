@@ -54,7 +54,7 @@ u8 load_item_data() {
     u8 result;
     char line_buffer[MAX_LINE_SIZE];
 
-    result = open_file("../server/data/item_list.txt", &item_data_file, "r"); 
+    result = open_file("data/item_list.txt", &item_data_file, "r"); 
     SM_ASSERT(result == true);
     LTRACE("opened item data file.");
        

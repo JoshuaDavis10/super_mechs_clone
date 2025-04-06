@@ -12,4 +12,5 @@
 #define true 1
 #define false 0
 
-#define MAX_MESSAGE_SIZE 1000
+#define WINDOW_WIDTH 1000
+#define WINDOW_HEIGHT 500

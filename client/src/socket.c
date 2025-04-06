@@ -89,3 +89,19 @@ u32 send_msg(const char* msg) {
     }
     return true;
 }
+
+i8 check_for_msg() {
+    TIMEVAL timeout;
+    timeout.tv_usec = 1000; //1000 microseconds == 1 millisecond
+    fd_set read;
+    FD_ZERO(&read);
+    FD_SET(sock, &read);
+    i32 result = select(0, &read, NULL, NULL, &timeout);
+    if(result == SOCKET_ERROR) {
+        return -1;
+    }
+    if(result == 0) {
+        return false;
+    }
+    return true;
+}

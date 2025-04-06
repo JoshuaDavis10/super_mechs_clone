@@ -66,13 +66,10 @@ typedef struct game_data {
 } game_data;
 
 //return 1 on successful initialize... for now it'll crash otherwise (assertion)
+u8 init_game(const char* mech_name);
 u8 init_game_data(); 
 u8 load_game_data(char* items_list_player, char* items_list_opp, i32 pos1, i32 pos2, i32 turn);
 void free_game_data(); 
-
-//return -1 on error (as in the request is valid but the action implied by the request can't be carried out)
-//return 1 if P1 wins as a result of request
-//return 2 if P2 wins as a result of request
-//return 0 otherwise.
 i8 process_command(const char* cmd); 
 u32 get_turn();
+i32 get_pos(i32 player);
