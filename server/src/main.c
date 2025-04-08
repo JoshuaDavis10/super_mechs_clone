@@ -113,6 +113,8 @@ int main(int argc, char** argv) {
         send_msg("valid", turn);
         recv_msg(command, turn);
         _ASSERT(strcmp(command, "ACK") == 0);
+        recv_msg(command, opp);
+        _ASSERT(strcmp(command, "ACK") == 0);
     }
 
     free_socket();
