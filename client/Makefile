@@ -5,8 +5,10 @@ BIN:=bin/client.exe
 BINDIR:=bin
 LFLAGS:=-lWs2_32 -lm -lraylib -lopengl32 -lgdi32 -lwinmm
 
-SOURCES=$(wildcard $(SRCDIR)/*.c)
-OBJECTS=$(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(wildcard $(SRCDIR)/*.c))
+SRCDIRS = $(sort $(dir $(wildcard $(SRCDIR)/*/)))
+OBJDIRS = $(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SRCDIRS))
+SOURCES=$(foreach dir, $(SRCDIRS),$(wildcard $(dir)*.c))
+OBJECTS=$(patsubst $(SRCDIR)%.c,$(OBJDIR)%.o,$(SOURCES))
 
 $(BIN): $(OBJECTS) | $(BINDIR)
 	@echo linking...    
@@ -14,18 +16,26 @@ $(BIN): $(OBJECTS) | $(BINDIR)
 
 $(BINDIR):
 	@mkdir bin
+	@echo created bin folder
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+obj/tools/%.o: src/tools/%.c | obj/tools
 	@echo compiling $<...
 	@$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJDIR):
-	@mkdir obj 
+obj/game/%.o: src/game/%.c | obj/game 
+	@echo compiling $<...
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJDIRS):
+	@mkdir $(OBJDIR) 
+	@mkdir $(OBJDIR)\tools
+	@mkdir $(OBJDIR)\game
+	@echo created obj folders
 
 .PHONY: clean
 clean:
 	@echo removing $(BINDIR) folder...
-	@rmdir /Q /S $(BINDIR)
+	@rmdir /s /q $(BINDIR) 
 	@echo removing $(OBJDIR) folder...
-	@rmdir /Q /S $(OBJDIR)
+	@rmdir /s /q $(OBJDIR)
 	@echo cleaned.

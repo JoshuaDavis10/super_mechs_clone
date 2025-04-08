@@ -1,9 +1,8 @@
 #include "item_data.h"
 
-#include "asserts.h"
-#include "defines.h"
-#include "files.h"
-#include "utils.h"
+#include "../tools/asserts.h"
+#include "../tools/files.h"
+#include "../tools/utils.h"
 
 #include <stdlib.h>
 #include <string.h>

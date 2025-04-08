@@ -1,12 +1,12 @@
 #include "ui.h"
 
-#include "../include/raylib.h"
+#include "../../include/raylib.h"
 
 #include "game_data.h"
 #include "item_data.h"
-#include "asserts.h"
-#include "event.h"
-#include "logger.h"
+#include "../tools/asserts.h"
+#include "../tools/event.h"
+#include "../tools/logger.h"
 
 enum {
     UI_STATE_DISPLAY,

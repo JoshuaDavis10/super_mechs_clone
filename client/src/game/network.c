@@ -1,10 +1,9 @@
 #include "network.h"
 
-#include "logger.h"
-
-#include "socket.h"
-#include "asserts.h"
-#include "event.h"
+#include "../tools/logger.h"
+#include "../tools/socket.h"
+#include "../tools/asserts.h"
+#include "../tools/event.h"
 
 #include <string.h>
 

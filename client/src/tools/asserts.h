@@ -1,6 +1,6 @@
 #pragma once
 
-#include "defines.h"
+#include "../defines.h"
 #include "logger.h"
 
 #include <stdlib.h> //for debug break?

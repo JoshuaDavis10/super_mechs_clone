@@ -1,12 +1,11 @@
 
-#include "../include/raylib.h"
+#include "../../include/raylib.h"
 
-#include "defines.h"
+#include "../defines.h"
 
-#include "logger.h"
-#include "asserts.h"
-
-#include "event.h"
+#include "../tools/logger.h"
+#include "../tools/asserts.h"
+#include "../tools/event.h"
 #include "network.h"
 #include "graphics.h"
 #include "ui.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "defines.h"
+#include "../defines.h"
 
 #define MAX_MESSAGE_SIZE 1000
 

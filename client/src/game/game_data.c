@@ -1,11 +1,11 @@
 #include "game_data.h"
 
-#include "asserts.h"
-#include "logger.h"
-#include "socket.h"
+#include "../tools/asserts.h"
+#include "../tools/logger.h"
+#include "../tools/socket.h"
 #include "item_data.h"
-#include "utils.h"
-#include "files.h"
+#include "../tools/utils.h"
+#include "../tools/files.h"
 
 #include <string.h>
 #include <stdlib.h>

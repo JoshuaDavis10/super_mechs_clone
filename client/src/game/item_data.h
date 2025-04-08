@@ -1,6 +1,6 @@
 #pragma once
 
-#include "defines.h"
+#include "../defines.h"
 #include "game_data.h"
 
 typedef struct item_torso {

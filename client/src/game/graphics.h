@@ -1,8 +1,8 @@
 #pragma once
 
-#include "defines.h"
+#include "../defines.h"
 
-#include "timer.h"
+#include "../tools/timer.h"
 
 typedef struct graphics_state {
     float abs_pos[2];

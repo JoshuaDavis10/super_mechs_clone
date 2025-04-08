@@ -1,6 +1,6 @@
 #pragma once
 
-#include "defines.h"
+#include "../defines.h"
 
 typedef enum w_dmg_type {
     PHYS=0,

@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "logger.h" //TODO: temp
-
 #define DEFAULT_CAPACITY 2
 
 void* darray_resize(void* array);
