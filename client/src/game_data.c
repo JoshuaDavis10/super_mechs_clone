@@ -158,13 +158,13 @@ u8 load_game_state(char* items_list_player, char* items_list_opp) {
     return true;
 }
 
-u8 init_game_data() {
+game_data* init_game_data() {
     SM_ASSERT(g_data == 0);
     g_data = (game_data*)malloc(sizeof(game_data));
     memset(g_data, 0, sizeof(game_data)); 
     LINFO("game data initialized.");
     LTRACE("memory used for game data: %lu bytes", sizeof(*g_data));
-    return true;
+    return g_data;
 }
 
 void free_game_data() {

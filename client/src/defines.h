@@ -1,3 +1,5 @@
+#pragma once
+
 #define u64 unsigned long
 #define i64 long
 #define u32 unsigned int
@@ -14,3 +16,35 @@
 
 #define WINDOW_WIDTH 1000
 #define WINDOW_HEIGHT 500
+
+//command stuff so that any events that need command data can send them when fired
+enum {
+    ACTION_W1,
+    ACTION_W2,
+    ACTION_W3,
+    ACTION_W4,
+    ACTION_W5,
+    ACTION_W6,
+    ACTION_S,
+    ACTION_G,
+    ACTION_CH,
+    ACTION_T0,
+    ACTION_T1,
+    ACTION_T2,
+    ACTION_T3,
+    ACTION_T4,
+    ACTION_T5,
+    ACTION_T6,
+    ACTION_T7,
+    ACTION_T8,
+    ACTION_T9,
+    ACTION_DA,
+    ACTION_DD,
+    ACTION_C,
+    ACTION_R1,
+    ACTION_R2,
+    ACTION_R3,
+    ACTION_L1,
+    ACTION_L2,
+    ACTION_L3,
+};

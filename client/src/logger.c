@@ -38,5 +38,20 @@ void log_message(u32 msg_type, const char* msg, ...) {
         case SM_LOG_TRACE:
             printf("[TRACE]: %s\n", output);
             break;
+        case SM_LOG_NET:
+            SetConsoleTextAttribute(hConsole, 8); 
+            printf("[NETWORK]: %s\n", output);
+            SetConsoleTextAttribute(hConsole, 7); 
+            break;
+        case SM_LOG_UI:
+            SetConsoleTextAttribute(hConsole, 3); 
+            printf("[UI]: %s\n", output);
+            SetConsoleTextAttribute(hConsole, 7); 
+            break;
+        case SM_LOG_ANIM:
+            SetConsoleTextAttribute(hConsole, 5); 
+            printf("[ANIMATION]: %s\n", output);
+            SetConsoleTextAttribute(hConsole, 7); 
+            break;
     }
 }

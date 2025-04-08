@@ -78,12 +78,12 @@ u32 recv_msg(char* msg) {
     }
     SM_ASSERT(numbytes != 0); //crash if server isn't sending messages
     msg[numbytes] = '\0';
-    LDEBUG("received message: %s", msg);
+    LNET("received message: %s", msg);
     return true;
 }
 
 u32 send_msg(const char* msg) {
-    LDEBUG("sending message: %s", msg);
+    LNET("sending message: %s", msg);
     if(send(sock, msg, strlen(msg), 0) == -1) {
         return false;
     }
@@ -92,12 +92,14 @@ u32 send_msg(const char* msg) {
 
 i8 check_for_msg() {
     TIMEVAL timeout;
-    timeout.tv_usec = 1000; //1000 microseconds == 1 millisecond
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 0; 
     fd_set read;
     FD_ZERO(&read);
     FD_SET(sock, &read);
     i32 result = select(0, &read, NULL, NULL, &timeout);
     if(result == SOCKET_ERROR) {
+        SM_ASSERT(result != SOCKET_ERROR);
         return -1;
     }
     if(result == 0) {

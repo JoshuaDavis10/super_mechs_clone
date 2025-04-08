@@ -3,6 +3,8 @@
 #include "defines.h"
 #include "logger.h"
 
+#include <stdlib.h> //for debug break?
+
 #define ASSERTIONS_ENABLED
 
 #ifdef ASSERTIONS_ENABLED

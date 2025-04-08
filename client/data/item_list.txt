@@ -46,7 +46,6 @@ smoking_barrel:0
 
 #end
 
-
 #top_weapons
 
 fire_hose:0
