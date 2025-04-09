@@ -55,15 +55,18 @@ int main(int argc, char** argv) {
 
     LINFO("starting game loop...");
 
+    u8 result;
     while(!WindowShouldClose()) { 
 
-        update_network();
+        result = update_network();
+        if(result == 2) { CloseWindow(); }
+        if(result == 3) { CloseWindow(); }
         update_graphics();
         update_ui();
 
         BeginDrawing();
 
-        ClearBackground(YELLOW);
+        ClearBackground(BLACK);
 
         draw_graphics();
         draw_ui();
@@ -73,6 +76,10 @@ int main(int argc, char** argv) {
     }
 
     LINFO("closed raylib window");
+    shutdown_graphics();
+    shutdown_ui();
+    shutdown_network();
+    shutdown_events();
 
     //TODO: disconnect socket???
     return 0;

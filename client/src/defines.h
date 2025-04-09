@@ -1,5 +1,7 @@
 #pragma once
 
+//TODO: i think a lot of these types are wrong do a lil sizeof() print thang
+
 #define u64 unsigned long
 #define i64 long
 #define u32 unsigned int

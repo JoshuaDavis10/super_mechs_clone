@@ -40,6 +40,7 @@ u8 startup_network(char* hostname) {
 }
 
 void shutdown_network() {
+    LINFO("shutdown netowrk.");
     //TODO: close socket connection?
 }
 
@@ -55,6 +56,14 @@ u8 update_network() {
                     LNET("NET_STATE_WAIT_FOR_INPUT");
                     fire_event(EVENT_NET_READY_FOR_INPUT, NULL, e_data);
                     network_state = NET_STATE_WAIT_FOR_INPUT;
+                }
+                else if(strcmp(network_message_buffer, "win") == 0) {
+                    LINFO("YOU WIN!!!");
+                    return 2; //2 for win
+                }
+                else if(strcmp(network_message_buffer, "loss") == 0) {
+                    LINFO("you lose...");
+                    return 3; //3 for loss
                 }
                 else {
                     if(strcmp(network_message_buffer, "w1")==0){e_data.data[0]=P2;e_data.data[1]=ACTION_W1;network_state=NET_STATE_WAIT_FOR_UI;LNET("NET_STATE_WAIT_FOR_UI");fire_event(EVENT_ACTION_TAKEN, NULL, e_data);}
@@ -100,6 +109,14 @@ u8 update_network() {
                     network_state = NET_STATE_WAIT_FOR_UI;
                     fire_event(EVENT_ACTION_TAKEN, NULL, e_data);
                     LNET("NET_STATE_WAIT_FOR_UI");
+                }
+                else if(strcmp(network_message_buffer, "win") == 0) {
+                    LINFO("YOU WIN!!!");
+                    return 2; //2 for win
+                }
+                else if(strcmp(network_message_buffer, "loss") == 0) {
+                    LINFO("you lose...");
+                    return 3; //3 for loss
                 }
                 else {
                     SM_ASSERT_MSG(0, "sent an invalid message to server");

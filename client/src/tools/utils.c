@@ -2,6 +2,7 @@
 
 #include <ctype.h>
 #include <string.h>
+#include <math.h>
 
 u8 is_number(const char* str) {
     u32 length = strlen(str);
@@ -12,4 +13,8 @@ u8 is_number(const char* str) {
             return false;
     }
     return true;
+}
+
+float square_root(float x) {
+    return sqrtf(x); //TODO: write your own
 }

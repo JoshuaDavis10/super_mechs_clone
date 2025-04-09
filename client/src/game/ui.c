@@ -8,6 +8,8 @@
 #include "../tools/event.h"
 #include "../tools/logger.h"
 
+#include <stdio.h>
+
 enum {
     UI_STATE_DISPLAY,
     UI_STATE_INPUT,
@@ -20,6 +22,7 @@ u8 on_rdy_for_input(i32 event_type, void* listener, void* sender, event_data dat
 u8 on_anim_complete(i32 event_type, void* listener, void* sender, event_data data); 
 
 void process_click(i32 button);
+void process_key(i32 key);
 
 u8 startup_ui(char* mechname) {
 
@@ -54,8 +57,10 @@ u8 startup_ui(char* mechname) {
 
 void shutdown_ui() {
     SM_ASSERT(ui != 0);
+    free_game_data();
     free(ui);
     ui = 0;
+    LINFO("shutdown ui.");
 }
 
 u8 update_ui() {
@@ -63,7 +68,15 @@ u8 update_ui() {
         case UI_STATE_DISPLAY: break; //do nothing     
         case UI_STATE_INPUT:
             if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) { process_click(0); } 
-            if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) { process_click(1); } 
+            else if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) { process_click(1); } 
+            else if(IsKeyPressed(KEY_A)) { process_key(KEY_A); }
+            else if(IsKeyPressed(KEY_D)) { process_key(KEY_D); }
+            else if(IsKeyPressed(KEY_Q)) { process_key(KEY_Q); }
+            else if(IsKeyPressed(KEY_E)) { process_key(KEY_E); }
+            else if(IsKeyPressed(KEY_W)) { process_key(KEY_W); }
+            else if(IsKeyPressed(KEY_S)) { process_key(KEY_S); }
+            else if(IsKeyPressed(KEY_G)) { process_key(KEY_G); }
+            else {}
             break;
 
     }
@@ -71,13 +84,20 @@ u8 update_ui() {
 }
 
 void draw_ui() {
-    //TODO: draw stuff based on state
+    char player_health[50];
+    char enemy_health[50];
     if(ui->state == UI_STATE_INPUT) {
         DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT/10, BLUE); 
     }
     else {
         DrawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT/10, GRAY); 
     }
+    snprintf(player_health, 50, "hp: %d", ui->data->d_dynamic[P1].hp);
+    snprintf(enemy_health, 50, "hp: %d", ui->data->d_dynamic[P2].hp);
+    DrawText("YOU:", 10, 10, 30, GREEN);
+    DrawText(player_health, 200, 20, 20, GREEN);
+    DrawText("BAD GUY:", WINDOW_WIDTH/2 + 10, 10, 30, RED);
+    DrawText(enemy_health, WINDOW_WIDTH/2 + 200, 20, 20, RED);
 }
 
 u8 on_rdy_for_input(i32 event_type, void* listener, void* sender, event_data data) {
@@ -94,6 +114,27 @@ u8 on_anim_complete(i32 event_type, void* listener, void* sender, event_data dat
             break;
         case ACTION_L1:
             process_command("l1");
+            break;
+        case ACTION_R2:
+            process_command("r2");
+            break;
+        case ACTION_L2:
+            process_command("l2");
+            break;
+        case ACTION_R3:
+            process_command("r3");
+            break;
+        case ACTION_L3:
+            process_command("l3");
+            break;
+        case ACTION_W1:    
+            process_command("w1");
+            break;
+        case ACTION_S:    
+            process_command("s");
+            break;
+        case ACTION_G:    
+            process_command("g");
             break;
     }
     event_data e;
@@ -115,6 +156,37 @@ void process_click(i32 button) {
         d.data[1] = 0;
     }
     fire_event(EVENT_UI_GOT_INPUT, NULL, d);    
+    ui->state = UI_STATE_DISPLAY
+    LUI("UI_STATE_DISPLAY");
+}
+
+void process_key(i32 key) {
+    event_data d;
+    d.data[1] = 0;
+    switch(key) { 
+        case KEY_A:
+            d.data[0] = ACTION_L2;
+            break;
+        case KEY_D:
+            d.data[0] = ACTION_R2;
+            break;
+        case KEY_Q:
+            d.data[0] = ACTION_L3;
+            break;
+        case KEY_E:
+            d.data[0] = ACTION_R3;
+            break;
+        case KEY_W:
+            d.data[0] = ACTION_W1;
+            break;
+        case KEY_S:
+            d.data[0] = ACTION_S;
+            break;
+        case KEY_G:
+            d.data[0] = ACTION_G;
+            break;
+    }
+    fire_event(EVENT_UI_GOT_INPUT, NULL, d);
     ui->state = UI_STATE_DISPLAY
     LUI("UI_STATE_DISPLAY");
 }

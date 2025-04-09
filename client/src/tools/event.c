@@ -34,6 +34,7 @@ void shutdown_events() {
         }
     }
     free(events_state);
+    LINFO("shutdown events.");
 }
 
 void register_event(i32 event_type, callback on_event, void* listener) {
