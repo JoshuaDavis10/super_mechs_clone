@@ -92,13 +92,13 @@ int main(int argc, char** argv) {
         send_msg("go", turn);
         recv_msg(command, turn);
         result = process_command(command);
-        if(result == 1) { 
+        if(result == 0) { 
             LINFO("player 1 wins."); 
             send_msg("win", P1);
             send_msg("loss", P2);
             break; 
         }
-        else if(result == 2) 
+        else if(result == 1) 
         { 
             LINFO("player 2 wins."); 
             send_msg("loss", P1);

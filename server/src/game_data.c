@@ -712,5 +712,5 @@ i8 process_command(const char* cmd) {
 
     LDEBUG("p1 hp: %d\tp2 hp: %d\n\t p1 pos: %d\tp2 pos: %d\n\t p1 heat: %d\tp2 heat: %d\n\t p1 nrg: %d\tp2 nrg: %d", g_data->d_dynamic[P1].hp, g_data->d_dynamic[P2].hp, g_data->d_dynamic[P1].pos, g_data->d_dynamic[P2].pos, g_data->d_dynamic[P1].heat, g_data->d_dynamic[P2].heat, g_data->d_dynamic[P1].energy, g_data->d_dynamic[P2].energy);//TODO: temp
 
-    return 0;
+    return 2; //lol
 }
