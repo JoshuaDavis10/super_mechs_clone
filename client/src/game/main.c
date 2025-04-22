@@ -59,8 +59,8 @@ int main(int argc, char** argv) {
     while(!WindowShouldClose()) { 
 
         result = update_network();
-        if(result == 2) { CloseWindow(); }
-        if(result == 3) { CloseWindow(); }
+        if(result == 2) { CloseWindow(); break; }
+        if(result == 3) { CloseWindow(); break; }
         update_graphics();
         update_ui();
 
