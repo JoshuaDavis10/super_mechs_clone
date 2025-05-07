@@ -1,4 +1,3 @@
-
 #include "../../include/raylib.h"
 
 #include "../defines.h"
