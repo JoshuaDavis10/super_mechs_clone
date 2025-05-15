@@ -8,6 +8,7 @@ typedef struct timer {
 } timer;
 
 float timer_get_time(timer timer);
+float timer_get_length(timer timer);
 void timer_start(timer* timer, float length);
 void timer_stop(timer* timer);
 u8 is_timer_done(timer timer);

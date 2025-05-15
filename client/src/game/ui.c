@@ -9,6 +9,7 @@
 #include "../tools/logger.h"
 
 #include <stdio.h>
+#include <string.h>
 
 enum {
     UI_STATE_DISPLAY,
@@ -73,7 +74,12 @@ u8 update_ui() {
             else if(IsKeyPressed(KEY_D)) { process_key(KEY_D); }
             else if(IsKeyPressed(KEY_Q)) { process_key(KEY_Q); }
             else if(IsKeyPressed(KEY_E)) { process_key(KEY_E); }
-            else if(IsKeyPressed(KEY_W)) { process_key(KEY_W); }
+            else if(IsKeyPressed(KEY_ONE)) { process_key(KEY_ONE); }
+            else if(IsKeyPressed(KEY_TWO)) { process_key(KEY_TWO); }
+            else if(IsKeyPressed(KEY_THREE)) { process_key(KEY_THREE); }
+            else if(IsKeyPressed(KEY_FOUR)) { process_key(KEY_FOUR); }
+            else if(IsKeyPressed(KEY_FIVE)) { process_key(KEY_FIVE); }
+            else if(IsKeyPressed(KEY_SIX)) { process_key(KEY_SIX); }
             else if(IsKeyPressed(KEY_S)) { process_key(KEY_S); }
             else if(IsKeyPressed(KEY_G)) { process_key(KEY_G); }
             else {}
@@ -130,6 +136,21 @@ u8 on_anim_complete(i32 event_type, void* listener, void* sender, event_data dat
         case ACTION_W1:    
             process_command("w1");
             break;
+        case ACTION_W2:    
+            process_command("w2");
+            break;
+        case ACTION_W3:    
+            process_command("w3");
+            break;
+        case ACTION_W4:    
+            process_command("w4");
+            break;
+        case ACTION_W5:    
+            process_command("w5");
+            break;
+        case ACTION_W6:    
+            process_command("w6");
+            break;
         case ACTION_S:    
             process_command("s");
             break;
@@ -163,6 +184,7 @@ void process_click(i32 button) {
 void process_key(i32 key) {
     event_data d;
     d.data[1] = 0;
+    char namebuf[50];
     switch(key) { 
         case KEY_A:
             d.data[0] = ACTION_L2;
@@ -176,8 +198,53 @@ void process_key(i32 key) {
         case KEY_E:
             d.data[0] = ACTION_R3;
             break;
-        case KEY_W:
+        case KEY_ONE:
+            get_weapon_name(P1, namebuf, 0);
+            if(strcmp(namebuf, "NONE") == 0) {
+                LWARN("tried to use weapon 0 when it doesn't exist");
+                return;
+            }
             d.data[0] = ACTION_W1;
+            break;
+        case KEY_TWO:
+            get_weapon_name(P1, namebuf, 1);
+            if(strcmp(namebuf, "NONE") == 0) {
+                LWARN("tried to use weapon 1 when it doesn't exist");
+                return;
+            }
+            d.data[0] = ACTION_W2;
+            break;
+        case KEY_THREE:
+            get_weapon_name(P1, namebuf, 2);
+            if(strcmp(namebuf, "NONE") == 0) {
+                LWARN("tried to use weapon 2 when it doesn't exist");
+                return;
+            }
+            d.data[0] = ACTION_W3;
+            break;
+        case KEY_FOUR:
+            get_weapon_name(P1, namebuf, 3);
+            if(strcmp(namebuf, "NONE") == 0) {
+                LWARN("tried to use weapon 3 when it doesn't exist");
+                return;
+            }
+            d.data[0] = ACTION_W4;
+            break;
+        case KEY_FIVE:
+            get_weapon_name(P1, namebuf, 4);
+            if(strcmp(namebuf, "NONE") == 0) {
+                LWARN("tried to use weapon 4 when it doesn't exist");
+                return;
+            }
+            d.data[0] = ACTION_W5;
+            break;
+        case KEY_SIX:
+            get_weapon_name(P1, namebuf, 5);
+            if(strcmp(namebuf, "NONE") == 0) {
+                LWARN("tried to use weapon 5 when it doesn't exist");
+                return;
+            }
+            d.data[0] = ACTION_W6;
             break;
         case KEY_S:
             d.data[0] = ACTION_S;

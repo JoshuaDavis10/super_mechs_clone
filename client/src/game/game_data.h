@@ -18,6 +18,7 @@ typedef enum w_displace {
 } w_displace;
 
 typedef struct weapon_data {
+    char name[50];
     i32 min_range;
     i32 max_range;
     i32 damage;
@@ -38,7 +39,11 @@ typedef struct weapon_data {
 
 typedef struct static_data {
    weapon_data weapons[11]; //weapons @ index 6-9 are stomp, grapple, charge, teleport (see enum @ top). weapon @ index 10 is drone
+   char drone_name[50];
+   char leg_name[50];
+   char torso_name[50];
    i32 max_hp;
+   //TODO: names of all items that will be drawn: torso, legs, weapons, drone
 } static_data;
 
 typedef struct dynamic_data {
@@ -63,6 +68,7 @@ typedef struct game_data {
     dynamic_data d_dynamic[2]; //index 0 for P1's dynamic data, index 1 for P2's dynamic data
     u32 turn; //either P1 (0) or P2 (1)
     u32 actions; //actions remaining for current turn
+    char* items[2];
 } game_data;
 
 //return 1 on successful initialize... for now it'll crash otherwise (assertion)
@@ -73,3 +79,7 @@ void free_game_data();
 i8 process_command(const char* cmd); 
 u32 get_turn();
 i32 get_pos(i32 player);
+void get_drone_name(i32 player, char* out_string);
+void get_leg_name(i32 player, char* out_string);
+void get_torso_name(i32 player, char* out_string);
+void get_weapon_name(i32 player, char* out_string, i32 w_index);

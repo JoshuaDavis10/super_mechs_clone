@@ -41,16 +41,16 @@ int main(int argc, char** argv) {
         return -1;
     }   
 
+    LINFO("initializing raylib window...");
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "super-mechs-clone v0.0.1");
+    SetTargetFPS(60);
+    LINFO("initialized raylib window");
+
     if(!startup_graphics()) {
         LERROR("failed to startup graphics system.");
         LERROR("terminating program...");
         return -1;
     }   
-
-    LINFO("initializing raylib window...");
-    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "super-mechs-clone v0.0.1");
-    SetTargetFPS(60);
-    LINFO("initialized raylib window");
 
     LINFO("starting game loop...");
 
@@ -60,7 +60,6 @@ int main(int argc, char** argv) {
         result = update_network();
         if(result == 2) { CloseWindow(); break; }
         if(result == 3) { CloseWindow(); break; }
-        update_graphics();
         update_ui();
 
         BeginDrawing();

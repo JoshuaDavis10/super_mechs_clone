@@ -189,6 +189,7 @@ u8 load_torso_to_game_data(item_torso t, i32 player) {
     g_data->d_dynamic[player].phys_res+= t.phys_res;
     g_data->d_dynamic[player].heat_res+= t.heat_res;
     g_data->d_dynamic[player].energy_res+= t.energy_res;
+    strcpy(g_data->d_static[player].torso_name, t.name);
     return true;
 }
 
@@ -213,6 +214,7 @@ u8 load_leg_to_game_data(item_leg t, i32 player) {
     g_data->d_static[player].weapons[REQ_S].energy_res_dmg = t.energy_res_dmg;
     g_data->d_static[player].weapons[REQ_S].displace = t.displace;
     g_data->d_static[player].weapons[REQ_S].dmg_type = t.dmg_type;
+    strcpy(g_data->d_static[player].leg_name, t.name);
     return true;
 }
 
@@ -235,6 +237,7 @@ u8 load_side_weapon_to_game_data(item_side_weapon t, i32 player, i32 sw_count) {
     g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].energy_res_dmg = t.energy_res_dmg;
     g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].displace = t.displace;
     g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].dmg_type = t.dmg_type;
+    strcpy(g_data->d_static[player].weapons[REQ_W1 + sw_count - 1].name, t.name);
     return true;
 }
 
@@ -257,6 +260,7 @@ u8 load_top_weapon_to_game_data(item_top_weapon t, i32 player, i32 tw_count) {
     g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].energy_res_dmg = t.energy_res_dmg;
     g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].displace = t.displace;
     g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].dmg_type = t.dmg_type;
+    strcpy(g_data->d_static[player].weapons[REQ_W5 + tw_count - 1].name, t.name);
     return true;
 }
 
@@ -342,6 +346,7 @@ u8 load_drone_to_game_data(item_drone t, i32 player) {
     g_data->d_static[player].weapons[REQ_T0 + 1].heat_res_dmg = t.heat_res_dmg;
     g_data->d_static[player].weapons[REQ_T0 + 1].energy_res_dmg = t.energy_res_dmg;
     g_data->d_static[player].weapons[REQ_T0 + 1].dmg_type = t.dmg_type;
+    strcpy(g_data->d_static[player].drone_name, t.name);
     return true;
 }
 
@@ -542,6 +547,19 @@ void check_items(char* items_list, char* result, i32 player) {
         LTRACE("loaded item: %s-%s", type_str, id_str);
         item_str = strtok_r(NULL, ",", &saveptr1);
     }
+    LDEBUG("side weapons loaded: %d", sw_count);
+    LDEBUG("top weapons loaded: %d", tw_count);
+
+    for(i32 i = sw_count; i < 4; i++) {
+        strcpy(g_data->d_static[player].weapons[i].name, "NONE");
+        LDEBUG("player %d's weapon %d name: %s", player+1, i, g_data->d_static[player].weapons[i].name);
+    }
+
+    for(i32 i = tw_count + 4; i < 6; i++) {
+        strcpy(g_data->d_static[player].weapons[i].name, "NONE");
+        LDEBUG("player %d's weapon %d name: %s", player+1, i, g_data->d_static[player].weapons[i].name);
+    }
+
 
     strcpy(result, "success");
 }
@@ -568,6 +586,8 @@ u8 load_game_data(char* items_list_player, char* items_list_opp, i32 pos1, i32 p
     g_data->d_dynamic[P1].pos = pos1;
     g_data->d_dynamic[P2].pos = pos2;
     g_data->turn = turn;
+    g_data->items[0] = items_list_player;
+    g_data->items[1] = items_list_opp;
     return true;
 }
 
@@ -795,4 +815,25 @@ i8 process_command(const char* cmd) {
     LDEBUG("p1 hp: %d\tp2 hp: %d\n\t p1 pos: %d\tp2 pos: %d\n\t p1 heat: %d\tp2 heat: %d\n\t p1 nrg: %d\tp2 nrg: %d", g_data->d_dynamic[P1].hp, g_data->d_dynamic[P2].hp, g_data->d_dynamic[P1].pos, g_data->d_dynamic[P2].pos, g_data->d_dynamic[P1].heat, g_data->d_dynamic[P2].heat, g_data->d_dynamic[P1].energy, g_data->d_dynamic[P2].energy);//TODO: temp
 
     return 0;
+}
+
+char* get_items(i32 player) {
+    SM_ASSERT(player == P1 || player == P2);
+    return g_data->items[player];
+}
+
+void get_drone_name(i32 player, char* out_string) {
+    strcpy(out_string, g_data->d_static[player].drone_name);
+}
+
+void get_leg_name(i32 player, char* out_string) {
+    strcpy(out_string, g_data->d_static[player].leg_name);
+}
+
+void get_torso_name(i32 player, char* out_string) {
+    strcpy(out_string, g_data->d_static[player].torso_name);
+}
+
+void get_weapon_name(i32 player, char* out_string, i32 w_index) {
+    strcpy(out_string, g_data->d_static[player].weapons[w_index].name);
 }

@@ -221,6 +221,7 @@ u8 load_torso_data(u32 count) {
             LTRACE("reading item %s [ID = T-%d]...", item_name, i_ID);
             SM_ASSERT(i_ID < count);
             if(!first_item_read_started) { first_item_read_started = true; }
+            strcpy(torso_list[i_ID].name, item_name);
         }
         read_line(item_data_file, line_buffer, MAX_LINE_SIZE+1); //read next line b4 next loop
     }
@@ -282,6 +283,7 @@ u8 load_leg_data(u32 count) {
             LTRACE("reading item %s [ID = L-%d]...", item_name, i_ID);
             SM_ASSERT(i_ID < count);
             if(!first_item_read_started) { first_item_read_started = true; }
+            strcpy(leg_list[i_ID].name, item_name);
         }
         read_line(item_data_file, line_buffer, MAX_LINE_SIZE+1); //read next line b4 next loop
     }
@@ -344,6 +346,7 @@ u8 load_side_weapon_data(u32 count) {
             LTRACE("reading item %s [ID = SW-%d]...", item_name, i_ID);
             SM_ASSERT(i_ID < count);
             if(!first_item_read_started) { first_item_read_started = true; }
+            strcpy(side_weapon_list[i_ID].name, item_name);
         }
         read_line(item_data_file, line_buffer, MAX_LINE_SIZE+1); //read next line b4 next loop
     }
@@ -406,6 +409,7 @@ u8 load_top_weapon_data(u32 count) {
             LTRACE("reading item %s [ID = TW-%d]...", item_name, i_ID);
             SM_ASSERT(i_ID < count);
             if(!first_item_read_started) { first_item_read_started = true; }
+            strcpy(top_weapon_list[i_ID].name, item_name);
         }
         read_line(item_data_file, line_buffer, MAX_LINE_SIZE+1); //read next line b4 next loop
     }
@@ -640,6 +644,7 @@ u8 load_drone_data(u32 count) {
             LTRACE("reading item %s [ID = D-%d]...", item_name, i_ID);
             SM_ASSERT(i_ID < count);
             if(!first_item_read_started) { first_item_read_started = true; }
+            strcpy(drone_list[i_ID].name, item_name);
         }
         read_line(item_data_file, line_buffer, MAX_LINE_SIZE+1); //read next line b4 next loop
     }
@@ -744,6 +749,7 @@ item_torso get_torso(i32 i_ID) {
     temp.energy_res     = torso_list[i_ID].energy_res;
     temp.cooling        = torso_list[i_ID].cooling;
     temp.energy_regen   = torso_list[i_ID].energy_regen;
+    strcpy(temp.name, torso_list[i_ID].name);
     return temp;
 }
 
@@ -767,6 +773,7 @@ item_leg get_leg(i32 i_ID) {
     temp.energy_res_dmg     = leg_list[i_ID].energy_res_dmg;
     temp.displace           = leg_list[i_ID].displace;
     temp.dmg_type           = leg_list[i_ID].dmg_type;
+    strcpy(temp.name, leg_list[i_ID].name);
     return temp;
 }
 
@@ -791,6 +798,7 @@ item_side_weapon get_side_weapon(i32 i_ID) {
     temp.energy_res_dmg     = side_weapon_list[i_ID].energy_res_dmg;
     temp.displace           = side_weapon_list[i_ID].displace;
     temp.dmg_type           = side_weapon_list[i_ID].dmg_type;
+    strcpy(temp.name, side_weapon_list[i_ID].name);
     return temp;
 }
 
@@ -815,6 +823,7 @@ item_top_weapon get_top_weapon(i32 i_ID) {
     temp.energy_res_dmg     = top_weapon_list[i_ID].energy_res_dmg;
     temp.displace           = top_weapon_list[i_ID].displace;
     temp.dmg_type           = top_weapon_list[i_ID].dmg_type;
+    strcpy(temp.name, top_weapon_list[i_ID].name);
     return temp;
 }
 
@@ -898,6 +907,7 @@ item_drone get_drone(i32 i_ID) {
     temp.heat_res_dmg       = drone_list[i_ID].heat_res_dmg;
     temp.energy_res_dmg     = drone_list[i_ID].energy_res_dmg;
     temp.dmg_type           = drone_list[i_ID].dmg_type;
+    strcpy(temp.name, drone_list[i_ID].name);
     return temp;
 }
 

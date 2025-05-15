@@ -25,3 +25,7 @@ void timer_stop(timer* timer) {
     timer->start_time = -1.0f;
     timer->length = -1.0f;
 }
+
+float timer_get_length(timer timer) {
+    return timer.length;
+}

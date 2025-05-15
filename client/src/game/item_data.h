@@ -4,6 +4,7 @@
 #include "game_data.h"
 
 typedef struct item_torso {
+    char name[50];
     i32 weight;
     i32 hp;
     i32 heat;
@@ -16,6 +17,7 @@ typedef struct item_torso {
 } item_torso;
 
 typedef struct item_leg {
+    char name[50];
     i32 weight;
     i32 hp;
     i32 uses;
@@ -36,6 +38,7 @@ typedef struct item_leg {
 } item_leg;
 
 typedef struct item_side_weapon {
+    char name[50];
     i32 weight;
     i32 uses;
     i32 min_range;
@@ -57,6 +60,7 @@ typedef struct item_side_weapon {
 } item_side_weapon;
 
 typedef struct item_top_weapon {
+    char name[50];
     i32 weight;
     i32 uses;
     i32 min_range;
@@ -132,6 +136,7 @@ typedef struct item_grapple_module {
 } item_grapple_module;
 
 typedef struct item_drone {
+    char name[50];
     i32 weight;
     i32 damage;
     i32 heat_cost;

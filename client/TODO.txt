@@ -1,0 +1,12 @@
+mechanics:
+x usability of all 6 weapons (keyboard input for now: 1-6)
+- functional drones
+x player must be unable to use a weapon 'slot' that is empty
+
+animations:
+- write all animation functions, and new ones for drone, teleport, charge, etc. as they get added
+- hook up animation frames to the items in the slot that uses the animation.
+
+UI:
+- buttons for user input
+- display all needed info in top bar
